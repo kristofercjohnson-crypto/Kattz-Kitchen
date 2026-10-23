@@ -2,3 +2,20 @@
 
 /* Get Saucy identity and discover navigation */
 :root{--bg:#0e0b0b;--bg2:#1a1010;--gold:#f0b34d;--border:#633021}.hero{background:radial-gradient(ellipse at 75% 55%,#8e2b12 0%,#32100d 36%,#0e0b0b 78%)}.hero h1 span{color:#ffbd50}.nav-cta,.btn-gold{box-shadow:0 0 22px #c7472433}.discover{text-align:center;background:linear-gradient(160deg,#130d0c,#2a1210)}.discover-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:35px}.discover-grid a{display:flex;flex-direction:column;align-items:center;gap:12px;padding:34px 15px;border:1px solid #a9693466;border-radius:14px;background:linear-gradient(145deg,#351b14,#130d0c);transition:transform .2s,border-color .2s}.discover-grid a:hover{transform:translateY(-4px);border-color:var(--gold)}.discover-grid span{font-size:42px;color:var(--gold)}.discover-grid strong{font-family:"Playfair Display",serif;font-size:22px}.discover-grid small{color:var(--muted)}.contact .btn{pointer-events:auto;opacity:1}@media(max-width:650px){.discover-grid{grid-template-columns:1fr}.discover-grid a{padding:22px}}
+
+
+/* Get Saucy: approved black-and-gold visual direction */
+:root{--bg:#080808;--bg2:#12100d;--cream:#fff4df;--muted:#c5b9a8;--gold:#e8b84e;--border:#665027}
+body{background:#080808}
+.header{background:#080808ed;border-bottom:1px solid #e8b84e35}
+.hero{background:radial-gradient(ellipse at 78% 45%,#392b13 0%,#17120b 35%,#080808 76%)}
+.hero h1 span,.section h2 em{color:#e8b84e}
+.discover{background:linear-gradient(155deg,#080808,#17130b)}
+.discover-grid a{background:linear-gradient(145deg,#1e1a12,#090909);border-color:#e8b84e66}
+.recipes,.about{background:#11100d}
+.recipe-card{background:#19160f;border-color:#e8b84e33}
+.gallery-tile{border-color:#e8b84e55}
+.tile-1,.tile-2,.tile-3{background:linear-gradient(145deg,#302410,#0a0a0a)}
+.quote-band{background:linear-gradient(110deg,#5d451b,#15100a)}
+.about-graphic{background:radial-gradient(circle,#322710,#090909)}
+.contact{background:radial-gradient(circle at center,#2b220f,#080808 72%)}
