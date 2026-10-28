@@ -28,7 +28,7 @@ input,textarea,select{width:100%;padding:11px 12px;margin:7px 0 10px;border:1px 
 </style>
 </head>
 <body><div class="shell">
-<header><a class="brand" href="index.html"><img src="katt-mascot.png" alt=""><span>GET <em>Saucy</em></span></a><nav class="header-actions"><a href="locator.html">Food Truck Map</a><a href="moderation.html" id="moderation-link" class="hidden">Moderation</a><a href="index.html">Home</a><a id="account-link" href="signup.html">Sign in</a></nav></header>
+<header><a class="brand" href="index.html"><img src="katt-mascot.png" alt=""><span>GET <em>Saucy</em></span></a><nav class="header-actions"><a href="locator.html">Food Truck Map</a><a href="profile.html" id="profile-link" class="hidden">My profile</a><a href="moderation.html" id="moderation-link" class="hidden">Moderation</a><a href="index.html">Home</a><a id="account-link" href="signup.html">Sign in</a></nav></header>
 <h1>Get Saucy <em>Community</em></h1><p class="lead">Share what you’re making, trade ideas, and show some love. 🍽️🔥</p>
 <div class="layout">
 <main>
@@ -46,7 +46,7 @@ input,textarea,select{width:100%;padding:11px 12px;margin:7px 0 10px;border:1px 
 <div id="composer-status" class="status" role="status" aria-live="polite"></div>
 </form>
 </section>
-<div class="feed-head"><h2>Community feed</h2><button id="refresh">↻ Refresh</button></div>
+<div class="feed-head"><h2>Community feed</h2><div class="feed-controls"><input id="feed-search" type="search" placeholder="Search recent posts…" aria-label="Search recent posts"><button id="refresh">↻ Refresh</button></div></div>
 <div id="feed"><div class="panel empty"><strong>Loading the food feed…</strong>One moment.</div></div>
 </main>
 <aside class="panel side"><h2>Let’s keep it fun</h2><p>Be kind, credit recipes and photos that aren’t yours, and share only content you have permission to post.</p><p>React with ❤️, 😋, 🔥, 👏, or 😂. Report anything that breaks the community rules.</p><div class="mini"><h2>Food businesses</h2><p>Share your story and menu here. Customers contact you directly to order; payments stay outside the app.</p></div><div class="mini"><h2>VIP videos</h2><p>Longer tutorials up to 10 minutes can come with VIP after subscription billing is set up. For now, videos are limited to 15 seconds.</p></div></aside>
@@ -59,7 +59,7 @@ const BUCKET='get-saucy-posts',MAX_FILE=50*1024*1024,MAX_VIDEO_SECONDS=15;
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY),$=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const status=(message,error=false)=>{$('composer-status').textContent=message;$('composer-status').classList.toggle('error',error);$('composer-status').classList.add('show')};
-let currentUser=null,profiles={},currentReactions={};
+let currentUser=null,profiles={},currentReactions={},savedPostIds=new Set(),followedUsers=new Set();
 const emoji=['❤️','😋','🔥','👏','😂'];
 const postFile=$('media-file'),preview=$('file-preview');
 $('post-type').addEventListener('change',()=>{$('recipe-fields').classList.toggle('hidden',$('post-type').value!=='recipe')});
@@ -82,7 +82,7 @@ async function profileMap(ids){if(!ids.length)return{};const {data,error}=await 
 function timeAgo(value){const seconds=Math.max(0,(Date.now()-new Date(value).getTime())/1000);if(seconds<60)return'just now';if(seconds<3600)return Math.floor(seconds/60)+'m ago';if(seconds<86400)return Math.floor(seconds/3600)+'h ago';return Math.floor(seconds/86400)+'d ago'}
 function makePost(post,comments,reactions){
  const author=profiles[post.user_id]||{},name=author.account_type==='business'?(author.business_name||author.display_name):(author.display_name||'Get Saucy member');
- const card=document.createElement('article');card.className='post';card.dataset.id=post.id;
+ const card=document.createElement('article');card.className='post';card.dataset.id=post.id;card.id='post-'+post.id;card.dataset.search=[post.title,post.caption,author,author.city].join(' ').toLowerCase();
  const head=document.createElement('div');head.className='post-head';head.innerHTML='<div class="person"><div class="avatar">🍽️</div><div><div class="author">'+esc(name)+'</div><div class="meta">'+esc(author.city||'')+(author.city?' · ':'')+timeAgo(post.created_at)+'</div></div></div><span class="post-type">'+(post.post_type==='recipe'?'RECIPE':'FOOD POST')+'</span>';card.append(head);
  if(post.media_path){const url=db.storage.from(BUCKET).getPublicUrl(post.media_path).data.publicUrl;let media;if(post.media_type==='video'){media=document.createElement('video');media.controls=true;media.playsInline=true}else{media=document.createElement('img');media.alt=post.title||'Get Saucy food post'}media.className='media';media.src=url;card.append(media)}
  const body=document.createElement('div');body.className='post-body';if(post.title){const title=document.createElement('p');title.className='post-title';title.textContent=post.title;body.append(title)}
@@ -94,8 +94,12 @@ function makePost(post,comments,reactions){
  for(const c of comments){const p=profiles[c.user_id]||{},n=p.account_type==='business'?(p.business_name||p.display_name):(p.display_name||'Member');const row=document.createElement('div');row.className='comment';row.innerHTML='<b>'+esc(n)+'</b> '+esc(c.body);commentList.append(row)}
  commentsBox.append(commentList);if(currentUser){const form=document.createElement('form');form.className='comment-form';const input=document.createElement('input');input.maxLength=1000;input.required=true;input.placeholder='Add a comment…';input.setAttribute('aria-label','Add a comment');const button=document.createElement('button');button.type='submit';button.className='btn';button.textContent='Post';form.append(input,button);form.onsubmit=async ev=>{ev.preventDefault();button.disabled=true;const {error}=await db.from('comments').insert({post_id:post.id,user_id:currentUser.id,body:input.value.trim()});if(error){button.disabled=false;alert(error.message);return}await loadFeed()};commentsBox.append(form)}else{const prompt=document.createElement('div');prompt.className='small';prompt.innerHTML='<a href="signup.html">Sign in</a> to join the conversation.';commentsBox.append(prompt)}
  const tools=document.createElement('div');tools.className='post-tools';const download=document.createElement('button');download.type='button';download.className='link-btn';download.textContent='Download media';download.onclick=async()=>{if(!post.media_path)return;try{const u=db.storage.from(BUCKET).getPublicUrl(post.media_path).data.publicUrl;const response=await fetch(u);if(!response.ok)throw Error('Download unavailable');const blob=await response.blob(),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(post.title||'get-saucy-post').replace(/[^a-z0-9-_ ]/gi,'')+(post.media_type==='video'?'.mp4':'.jpg');a.click();URL.revokeObjectURL(a.href)}catch(e){window.open(db.storage.from(BUCKET).getPublicUrl(post.media_path).data.publicUrl,'_blank','noopener')}}
- const report=document.createElement('button');report.type='button';report.className='link-btn';report.textContent='Report';report.onclick=async()=>{if(!currentUser){location.href='signup.html';return}const reason=prompt('What is the concern? (spam, harmful, stolen, or other)');if(!reason)return;const {error}=await db.from('post_reports').insert({post_id:post.id,reporter_id:currentUser.id,reason:reason.slice(0,300)});alert(error?error.message:'Thanks. Your report was recorded.')};tools.append(download,report);commentsBox.append(tools);body.append(commentsBox);card.append(body);return card
+ const report=document.createElement('button');report.type='button';report.className='link-btn';report.textContent='Report';report.onclick=async()=>{if(!currentUser){location.href='signup.html';return}const reason=prompt('What is the concern? (spam, harmful, stolen, or other)');if(!reason)return;const {error}=await db.from('post_reports').insert({post_id:post.id,reporter_id:currentUser.id,reason:reason.slice(0,300)});alert(error?error.message:'Thanks. Your report was recorded.')};tools.append(download,report);if(currentUser&&currentUser.id!==post.user_id){const f=document.createElement("button");f.type="button";f.className="link-btn";f.textContent=followedUsers.has(post.user_id)?"Following":"Follow";f.onclick=()=>toggleFollow(post.user_id);tools.append(f)}if(currentUser&&post.post_type==="recipe"){const b=document.createElement("button");b.type="button";b.className="link-btn";b.textContent=savedPostIds.has(post.id)?"Saved recipe":"Save recipe";b.onclick=()=>toggleSave(post.id);tools.append(b)}if(currentUser&&currentUser.id===post.user_id){const e=document.createElement("button");e.type="button";e.className="link-btn";e.textContent="Edit";e.onclick=()=>editPost(post);const d=document.createElement("button");d.type="button";d.className="link-btn";d.textContent="Delete";d.onclick=()=>deletePost(post);tools.append(e,d)}commentsBox.append(tools);body.append(commentsBox);card.append(body);return card
 }
+async function toggleFollow(id){if(!currentUser)return;const q=followedUsers.has(id)?db.from('follows').delete().eq('follower_id',currentUser.id).eq('followed_id',id):db.from('follows').insert({follower_id:currentUser.id,followed_id:id});const {error}=await q;if(error){alert(error.message);return}await loadFeed()}
+async function toggleSave(id){if(!currentUser)return;const q=savedPostIds.has(id)?db.from('saved_posts').delete().eq('user_id',currentUser.id).eq('post_id',id):db.from('saved_posts').insert({user_id:currentUser.id,post_id:id});const {error}=await q;if(error){alert(error.message);return}await loadFeed()}
+async function editPost(p){const title=prompt('Edit title:',p.title||'');if(title===null)return;const caption=prompt('Edit caption:',p.caption||'');if(caption===null)return;let ingredients=p.ingredients||'',instructions=p.instructions||'';if(p.post_type==='recipe'){ingredients=prompt('Edit ingredients:',ingredients);if(ingredients===null)return;instructions=prompt('Edit steps:',instructions);if(instructions===null)return}const {error}=await db.from('posts').update({title:title.slice(0,120),caption:caption.slice(0,2000),ingredients:ingredients.slice(0,5000),instructions:instructions.slice(0,10000)}).eq('id',p.id).eq('user_id',currentUser.id);if(error){alert(error.message);return}await loadFeed()}
+async function deletePost(p){if(!confirm('Delete this post and its comments and reactions?'))return;const {error}=await db.from('posts').delete().eq('id',p.id).eq('user_id',currentUser.id);if(error){alert(error.message);return}if(p.media_path)await db.storage.from(BUCKET).remove([p.media_path]);await loadFeed()}
 async function react(postId,emojiValue){if(!currentUser){location.href='signup.html';return}const mine=currentReactions[postId];let result;if(mine===emojiValue)result=await db.from('post_reactions').delete().eq('post_id',postId).eq('user_id',currentUser.id);else result=await db.from('post_reactions').upsert({post_id:postId,user_id:currentUser.id,emoji:emojiValue});if(result.error){alert(result.error.message);return}await loadFeed()}
 async function loadFeed(){
  const box=$('feed');box.innerHTML='<div class="panel empty"><strong>Loading the food feed…</strong>One moment.</div>';
@@ -110,6 +114,7 @@ async function loadFeed(){
   db.from('post_reactions').select('post_id,user_id,emoji').in('post_id',ids)
  ]);
  if(commentError)throw commentError;if(reactionError)throw reactionError;
+ if(currentUser){const [{data:saves,error:se},{data:follows,error:fe}]=await Promise.all([db.from('saved_posts').select('post_id').eq('user_id',currentUser.id),db.from('follows').select('followed_id').eq('follower_id',currentUser.id)]);if(se)throw se;if(fe)throw fe;savedPostIds=new Set((saves||[]).map(x=>x.post_id));followedUsers=new Set((follows||[]).map(x=>x.followed_id))}
  const profilesFor=await profileMap([...new Set([...(comments||[]).map(x=>x.user_id)])]);profiles={...profiles,...profilesFor};
  currentReactions=Object.fromEntries((reactions||[]).filter(r=>r.user_id===currentUser?.id).map(r=>[r.post_id,r.emoji]));
  box.replaceChildren();for(const p of posts)box.append(makePost(p,(comments||[]).filter(c=>c.post_id===p.id),(reactions||[]).filter(r=>r.post_id===p.id)))
@@ -118,9 +123,9 @@ async function loadFeed(){
 async function init(){
  const {data:{session}}=await db.auth.getSession();currentUser=session?.user||null;
  $('composer').classList.toggle('hidden',!currentUser);$('sign-in-needed').classList.toggle('hidden',!!currentUser);
- $('moderation-link').classList.toggle('hidden',!['moderator','admin'].includes(currentUser?.app_metadata?.role));\n $('account-link').textContent=currentUser?'Sign out':'Sign in';$('account-link').href=currentUser?'#signout':'signup.html';
+ $('moderation-link').classList.toggle('hidden',!['moderator','admin'].includes(currentUser?.app_metadata?.role));\n $('profile-link').classList.toggle('hidden',!currentUser);$('moderation-link').classList.toggle('hidden',!['moderator','admin'].includes(currentUser?.app_metadata?.role));$('account-link').textContent=currentUser?'Sign out':'Sign in';$('account-link').href=currentUser?'#signout':'signup.html';
  if(currentUser)$('account-link').onclick=async e=>{e.preventDefault();await db.auth.signOut();location.reload()};
- $('refresh').onclick=loadFeed;
+ $('refresh').onclick=loadFeed;$('feed-search').oninput=()=>{const q=$('feed-search').value.trim().toLowerCase();document.querySelectorAll('.post').forEach(el=>el.classList.toggle('hidden',!el.dataset.search.includes(q)))};
  await loadFeed();
 }
 $('composer').addEventListener('submit',async event=>{
