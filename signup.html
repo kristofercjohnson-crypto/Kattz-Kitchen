@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080808">
+<title>Join Get Saucy</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#080808;--panel:#12100d;--panel2:#1b1710;--gold:#e8b84e;--gold2:#ffd986;--cream:#fff4df;--muted:#c5b9a8;--red:#b9361d;--line:#665027;--error:#ff9a83}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% -10%,#392810 0,#16120b 28%,var(--bg) 68%);color:var(--cream);font:15px 'DM Sans',Arial,sans-serif}
+a{color:var(--gold2);text-decoration:none}.shell{width:min(100% - 32px,760px);margin:0 auto;padding:22px 0 54px}
+header{display:flex;justify-content:space-between;align-items:center;padding:0 0 18px;border-bottom:1px solid #e8b84e38}
+.brand{display:flex;align-items:center;gap:10px;color:var(--gold);font-size:20px;font-weight:900;font-style:italic}.brand img{width:44px;height:44px;object-fit:contain}.brand em{color:#f2b34c;font:32px 'Great Vibes',cursive}
+.back{font-size:13px;font-weight:700}
+.intro{text-align:center;padding:28px 10px 22px}.eyebrow{margin:0 0 9px;color:var(--gold);font-size:10px;font-weight:900;letter-spacing:2.3px}.intro h1{margin:0;font-size:clamp(30px,7vw,46px);line-height:1.08}.intro h1 em{color:var(--gold);font:1.18em 'Great Vibes',cursive}.intro p{max-width:520px;margin:12px auto 0;color:var(--muted);line-height:1.6}
+.card{padding:clamp(19px,5vw,34px);background:linear-gradient(145deg,#19150f,#0d0c0a 75%);border:1px solid #e8b84e66;border-radius:20px;box-shadow:0 24px 70px #0008}
+.stepper{display:flex;align-items:center;gap:12px;margin:0 0 26px;color:var(--muted);font-size:12px;font-weight:700}.step{display:flex;align-items:center;gap:8px}.bubble{display:grid;place-items:center;width:27px;height:27px;border:1px solid #806733;border-radius:50%;color:var(--gold)}.step.active{color:var(--cream)}.step.active .bubble,.step.done .bubble{background:var(--gold);border-color:var(--gold);color:#161109}.line{height:1px;flex:1;background:#6b5834}
+h2{margin:0 0 7px;font-size:21px}.hint{margin:0 0 20px;color:var(--muted);font-size:13px;line-height:1.55}
+.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0 22px}.type-card{position:relative;display:block;padding:18px 16px;border:1px solid #705a34;border-radius:14px;background:#100e0a;cursor:pointer;transition:.18s}.type-card:hover{border-color:var(--gold);transform:translateY(-2px)}.type-card.selected{border:2px solid var(--gold);background:linear-gradient(145deg,#302411,#13100a);box-shadow:0 0 0 3px #e8b84e18}.type-card input{position:absolute;opacity:0;pointer-events:none}.type-icon{display:block;margin-bottom:10px;font-size:29px}.type-card strong{display:block;font-size:15px}.type-card small{display:block;margin-top:6px;color:var(--muted);font-size:12px;line-height:1.45}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}.field{margin:0 0 15px}.field.full{grid-column:1/-1}label{display:block;margin:0 0 7px;font-size:12px;font-weight:800;color:#f7e3bf}input,select,textarea{display:block;width:100%;min-height:46px;padding:12px 13px;border:1px solid #715a34;border-radius:10px;background:#090909;color:var(--cream);font:14px 'DM Sans',sans-serif;outline:none}textarea{min-height:88px;resize:vertical}input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px #e8b84e1c}input::placeholder,textarea::placeholder{color:#8e8475}
+.actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:7px}.btn{display:inline-flex;justify-content:center;align-items:center;min-height:46px;padding:12px 20px;border:0;border-radius:10px;background:linear-gradient(110deg,#c28927,#ffcf62);color:#191208;font:900 13px 'DM Sans',sans-serif;cursor:pointer}.btn:hover{filter:brightness(1.08)}.btn.secondary{background:#201b12;border:1px solid #725b35;color:var(--cream)}.btn:disabled{opacity:.65;cursor:wait}.text-button{padding:10px 0;border:0;background:none;color:var(--gold2);font:700 12px 'DM Sans',sans-serif;cursor:pointer}
+.switch{text-align:center;margin:22px 0 0;color:var(--muted);font-size:13px}.switch button{border:0;background:none;color:var(--gold2);font:800 13px 'DM Sans',sans-serif;cursor:pointer}
+.notice{display:none;margin:16px 0 0;padding:12px 14px;border:1px solid #9d793e;border-radius:10px;background:#21190d;color:#f8d995;font-size:13px;line-height:1.5}.notice.show{display:block}.notice.error{border-color:#983b2d;background:#24110e;color:var(--error)}
+.hidden{display:none!important}.subnote{margin:17px 0 0;color:#a99b87;font-size:11px;line-height:1.55}
+@media(max-width:560px){.type-grid{grid-template-columns:1fr}.fields{grid-template-columns:1fr}.field.full{grid-column:auto}.actions .btn{padding:12px 15px}.stepper{gap:7px;font-size:10px}.bubble{width:24px;height:24px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header><a class="brand" href="index.html"><img src="katt-mascot.png" alt=""><span>GET <em>Saucy</em></span></a><a class="back" href="index.html">← Back to Get Saucy</a></header>
+<section class="intro"><p class="eyebrow">REAL MISSISSIPPI BBQ • FOOD • COMMUNITY</p><h1>Come get <em>Saucy</em></h1><p>One account gets you into the whole food community. Join as a creator or set up your food business profile.</p></section>
+<main class="card">
+<div id="signup-view">
+<div class="stepper" aria-label="Signup progress"><div class="step active" id="step-label-1"><span class="bubble">1</span><span>Your account</span></div><span class="line"></span><div class="step" id="step-label-2"><span class="bubble">2</span><span>Your profile</span></div></div>
+<section id="step-one">
+<h2>Create your account</h2><p class="hint">Choose how you’ll use Get Saucy. You’ll use one email and password to sign in either way.</p>
+<div class="type-grid" role="radiogroup" aria-label="Account type">
+<label class="type-card selected" id="personal-card"><input type="radio" name="account-type" value="personal" checked><span class="type-icon">👩🏽‍🍳</span><strong>Personal creator</strong><small>Share food photos, short videos, recipes, and your cooking story.</small></label>
+<label class="type-card" id="business-card"><input type="radio" name="account-type" value="business"><span class="type-icon">🍽️</span><strong>Food business</strong><small>Showcase your food truck, catering, restaurant, or other food business.</small></label>
+</div>
+<div class="fields">
+<div class="field full"><label for="email">Email address</label><input id="email" type="email" autocomplete="email" placeholder="you@example.com" required></div>
+<div class="field"><label for="password">Password</label><input id="password" type="password" autocomplete="new-password" minlength="8" placeholder="At least 8 characters" required></div>
+<div class="field"><label for="confirm-password">Confirm password</label><input id="confirm-password" type="password" autocomplete="new-password" minlength="8" placeholder="Enter it again" required></div>
+</div>
+<div class="actions"><span></span><button class="btn" id="continue" type="button">Continue to profile →</button></div>
+</section>
+<section id="step-two" class="hidden">
+<h2 id="profile-title">Set up your creator profile</h2><p class="hint" id="profile-hint">Add a few details so the community can get to know you.</p>
+<form id="signup-form">
+<div id="personal-fields" class="fields">
+<div class="field"><label for="creator-name">Display name</label><input id="creator-name" maxlength="80" autocomplete="name" placeholder="What should we call you?"></div>
+<div class="field"><label for="creator-city">City / location</label><input id="creator-city" maxlength="100" autocomplete="address-level2" placeholder="City, state"></div>
+<div class="field full"><label for="creator-cuisine">Cuisine or food you love</label><input id="creator-cuisine" maxlength="120" placeholder="Southern BBQ, baking, Trinidadian food..."></div>
+<div class="field full"><label for="creator-bio">A little about you</label><textarea id="creator-bio" maxlength="500" placeholder="Tell the community what you like to cook or share."></textarea></div>
+</div>
+<div id="business-fields" class="fields hidden">
+<div class="field"><label for="business-name">Business name</label><input id="business-name" maxlength="100" placeholder="Your business name"></div>
+<div class="field"><label for="business-category">Business type</label><select id="business-category"><option value="">Choose one</option><option>Food truck</option><option>Caterer</option><option>Restaurant</option><option>Pop-up / plate seller</option><option>Food product maker</option><option>Other food business</option></select></div>
+<div class="field"><label for="business-city">City / service area</label><input id="business-city" maxlength="120" placeholder="City, state"></div>
+<div class="field"><label for="business-phone">Public phone</label><input id="business-phone" type="tel" maxlength="30" autocomplete="tel" placeholder="(555) 555-0123"></div>
+<div class="field"><label for="business-website">Website (optional)</label><input id="business-website" type="url" maxlength="250" placeholder="https://"></div>
+<div class="field"><label for="business-menu">Menu or social link (optional)</label><input id="business-menu" type="url" maxlength="250" placeholder="https://"></div>
+<div class="field full"><label for="business-description">What do you serve?</label><textarea id="business-description" maxlength="500" placeholder="Tell people what makes your food special."></textarea></div>
+</div>
+<div class="actions"><button class="btn secondary" id="back" type="button">← Back</button><button class="btn" id="create-account" type="submit">Create my account</button></div>
+</form>
+</section>
+<section id="login-view" class="hidden">
+<h2>Welcome back</h2><p class="hint">Sign in with the same Get Saucy account you created.</p>
+<div class="fields"><div class="field full"><label for="login-email">Email address</label><input id="login-email" type="email" autocomplete="email" placeholder="you@example.com"></div><div class="field full"><label for="login-password">Password</label><input id="login-password" type="password" autocomplete="current-password" placeholder="Your password"></div></div>
+<div class="actions"><button class="text-button" id="forgot-password" type="button">Forgot password?</button><button class="btn" id="sign-in" type="button">Sign in</button></div>
+</section>
+<div class="notice" id="notice" role="status" aria-live="polite"></div>
+<p class="switch" id="switch-to-login">Already have an account? <button type="button">Sign in</button></p>
+<p class="switch hidden" id="switch-to-signup">New to Get Saucy? <button type="button">Create an account</button></p>
+<p class="subnote">Business profiles can share a website, menu, and contact details so customers can reach you directly. Ordering and payments stay outside the app for now. Email confirmation may be required before your first sign-in.</p>
+</main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const SUPABASE_URL='https://tacvlueakxokrzvtxpnx.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_cdyFDjwbzCdgAVpg2-nOUQ_3mz0410G';
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+const $=id=>document.getElementById(id);
+let accountType='personal';
+const notice=$('notice');
+function showNotice(message,isError=false){notice.textContent=message;notice.classList.toggle('error',isError);notice.classList.add('show')}
+function setBusy(button,busy,label){button.disabled=busy;button.textContent=busy?'Please wait…':label}
+function chooseType(type){accountType=type;document.querySelectorAll('.type-card').forEach(card=>card.classList.toggle('selected',card.querySelector('input').value===type));document.querySelector('input[name="account-type"][value="'+type+'"]').checked=true}
+document.querySelectorAll('.type-card input').forEach(input=>input.addEventListener('change',()=>chooseType(input.value)));
+$('continue').addEventListener('click',()=>{
+  notice.classList.remove('show');
+  const email=$('email').value.trim(),password=$('password').value,confirm=$('confirm-password').value;
+  if(!email||!$('email').checkValidity()){showNotice('Enter a valid email address.',true);$('email').focus();return}
+  if(password.length<8){showNotice('Use a password with at least 8 characters.',true);$('password').focus();return}
+  if(password!==confirm){showNotice('Those passwords do not match.',true);$('confirm-password').focus();return}
+  $('step-one').classList.add('hidden');$('step-two').classList.remove('hidden');
+  $('step-label-1').classList.remove('active');$('step-label-1').classList.add('done');$('step-label-2').classList.add('active');
+  const business=accountType==='business';$('personal-fields').classList.toggle('hidden',business);$('business-fields').classList.toggle('hidden',!business);
+  $('profile-title').textContent=business?'Set up your business profile':'Set up your creator profile';
+  $('profile-hint').textContent=business?'Add your business details. You can share a website, menu, and direct contact info.':'Add a few details so the community can get to know you.';
+  $('notice').classList.remove('show');$('profile-title').focus?.();
+});
+$('back').addEventListener('click',()=>{$('step-two').classList.add('hidden');$('step-one').classList.remove('hidden');$('step-label-1').classList.add('active');$('step-label-1').classList.remove('done');$('step-label-2').classList.remove('active');notice.classList.remove('show')});
+$('signup-form').addEventListener('submit',async event=>{
+  event.preventDefault();notice.classList.remove('show');
+  const email=$('email').value.trim(),password=$('password').value;
+  let metadata;
+  if(accountType==='business'){
+    const businessName=$('business-name').value.trim(),category=$('business-category').value,city=$('business-city').value.trim();
+    if(!businessName||!category||!city){showNotice('Please enter your business name, business type, and city or service area.',true);return}
+    for(const id of ['business-website','business-menu']){const field=$(id);if(field.value&&!field.checkValidity()){showNotice('Enter a complete link starting with https:// or http://.',true);field.focus();return}}
+    metadata={account_type:'business',business_name:businessName,business_category:category,city,phone:$('business-phone').value.trim(),website:$('business-website').value.trim(),menu_or_social_url:$('business-menu').value.trim(),business_description:$('business-description').value.trim()};
+  }else{
+    const displayName=$('creator-name').value.trim();
+    if(!displayName){showNotice('Please add a display name for your creator profile.',true);$('creator-name').focus();return}
+    metadata={account_type:'personal',display_name:displayName,city:$('creator-city').value.trim(),cuisine_background:$('creator-cuisine').value.trim(),bio:$('creator-bio').value.trim()};
+  }
+  const button=$('create-account');setBusy(button,true,'Create my account');
+  try{
+    const {data,error}=await supabaseClient.auth.signUp({email,password,options:{data:metadata,emailRedirectTo:new URL('index.html',location.href).href}});
+    if(error)throw error;
+    if(data.session){showNotice('Your Get Saucy account is ready. You’re signed in!');setTimeout(()=>location.href='index.html#home',1400)}
+    else showNotice('Account created. Check your inbox for the confirmation link, then come back here to sign in. If you don’t see it, check spam.');
+  }catch(error){showNotice(error.message||'We could not create your account. Please try again.',true)}
+  finally{setBusy(button,false,'Create my account')}
+});
+$('switch-to-login').querySelector('button').addEventListener('click',()=>{ $('signup-view').classList.add('hidden');$('login-view').classList.remove('hidden');$('switch-to-login').classList.add('hidden');$('switch-to-signup').classList.remove('hidden');notice.classList.remove('show')});
+$('switch-to-signup').querySelector('button').addEventListener('click',()=>{ $('login-view').classList.add('hidden');$('signup-view').classList.remove('hidden');$('switch-to-signup').classList.add('hidden');$('switch-to-login').classList.remove('hidden');notice.classList.remove('show')});
+$('sign-in').addEventListener('click',async()=>{
+  notice.classList.remove('show');const email=$('login-email').value.trim(),password=$('login-password').value;
+  if(!email||!password){showNotice('Enter your email and password.',true);return}
+  const button=$('sign-in');setBusy(button,true,'Sign in');
+  try{const {error}=await supabaseClient.auth.signInWithPassword({email,password});if(error)throw error;showNotice('You’re signed in. Welcome back!');setTimeout(()=>location.href='index.html#home',900)}
+  catch(error){showNotice(error.message||'We could not sign you in. Please try again.',true)}
+  finally{setBusy(button,false,'Sign in')}
+});
+$('forgot-password').addEventListener('click',async()=>{
+  notice.classList.remove('show');const email=$('login-email').value.trim();if(!email||!$('login-email').checkValidity()){showNotice('Enter your email address first, then choose Forgot password.',true);$('login-email').focus();return}
+  try{const {error}=await supabaseClient.auth.resetPasswordForEmail(email,{redirectTo:new URL('signup.html',location.href).href});if(error)throw error;showNotice('If an account uses that email, Supabase will send a password reset link.')}
+  catch(error){showNotice(error.message||'We could not send a reset link right now.',true)}
+});
+</script>
+</body>
+</html>
