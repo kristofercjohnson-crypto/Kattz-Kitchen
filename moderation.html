@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080808"><title>Get Saucy | Moderator</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#080808;--panel:#14120e;--gold:#e8b84e;--cream:#fff4df;--muted:#c5b9a8;--red:#a93220;--green:#607b3b}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#37280f 0,#131109 28%,var(--bg) 65%);color:var(--cream);font:14px 'DM Sans',Arial,sans-serif}
+a{color:#ffd986;text-decoration:none}.shell{width:min(100% - 22px,950px);margin:0 auto;padding:14px 0 50px}
+header{display:flex;align-items:center;justify-content:space-between;padding:11px 15px;background:#090909ed;border:1px solid #e8b84e55;border-radius:14px}
+.brand{display:flex;align-items:center;gap:9px;color:var(--gold);font-size:19px;font-weight:900;font-style:italic}.brand img{width:39px;height:39px;object-fit:contain}.brand em{font:30px 'Great Vibes',cursive}
+nav{display:flex;gap:15px;align-items:center;font-size:12px;font-weight:700}
+h1{margin:25px 2px 5px;font-size:clamp(27px,5vw,40px)}h1 em{color:var(--gold);font:1.12em 'Great Vibes',cursive}.lead{margin:0 2px 18px;color:var(--muted);line-height:1.6}
+.panel,.case{background:linear-gradient(145deg,#19160f,#0d0c0b);border:1px solid #e8b84e55;border-radius:15px}
+.panel{padding:18px;margin:0 0 16px}.case{padding:14px;margin:0 0 13px}.case-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.case h2{margin:0 0 5px;font-size:16px}.meta{color:var(--muted);font-size:11px;line-height:1.5}.reason{margin:12px 0;padding:10px 12px;background:#090909;border-left:3px solid var(--gold);border-radius:5px;white-space:pre-wrap}
+.media{display:block;max-width:100%;max-height:420px;margin:10px auto;border-radius:10px;background:#050505}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+button{border:1px solid #765b32;border-radius:9px;background:#1b170f;color:var(--cream);padding:9px 12px;font-weight:800;cursor:pointer}
+button:hover{border-color:var(--gold);color:var(--gold)}button.hide{background:#3a2410;border-color:#9b7026;color:#ffda83}button.remove{background:#371310;border-color:#a73b2b;color:#ffb5a6}button.restore{background:#1b2c15;border-color:#607b3b;color:#d6f2b3}
+.empty{padding:24px;text-align:center;color:var(--muted);line-height:1.6}.notice{padding:12px 14px;border:1px solid #796130;background:#21190d;border-radius:9px;color:#f5d995;margin:12px 0}.notice.error{border-color:#9c4436;background:#2a1210;color:#ffb4a2}
+.hidden{display:none!important}.group-title{font-size:19px;margin:22px 2px 10px}.pending-badge{color:#ffda83;font-size:10px;letter-spacing:1px;font-weight:900}.tabs{display:flex;gap:9px;margin:14px 0}.tabs button.active{background:#443419;border-color:var(--gold);color:#ffe0a1}
+</style>
+</head>
+<body><div class="shell">
+<header><a class="brand" href="index.html"><img src="katt-mascot.png" alt=""><span>GET <em>Saucy</em></span></a><nav><a href="community.html">Community</a><a href="index.html">Home</a><a id="signout" href="#">Sign out</a></nav></header>
+<h1>Community <em>moderation</em></h1><p class="lead">Review reported posts, take action, and restore content when a report was mistaken. Actions are recorded on the report and post.</p>
+<div id="notice" class="notice hidden" role="status" aria-live="polite"></div>
+<section id="auth-panel" class="panel hidden"><h2>Moderator sign in required</h2><p>Sign in with your Get Saucy account, then ask the project owner to assign moderator access if you are an authorized reviewer.</p><a class="btn" href="signup.html">Go to sign in →</a></section>
+<main id="dashboard" class="hidden">
+<div class="tabs"><button id="pending-tab" class="active">Pending reports</button><button id="hidden-tab">Hidden / removed posts</button><button id="refresh">Refresh</button></div>
+<section id="pending-section"><h2 class="group-title">Reported posts</h2><div id="pending-list"></div></section>
+<section id="hidden-section" class="hidden"><h2 class="group-title">Hidden and removed posts</h2><div id="hidden-list"></div></section>
+</main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const db=window.supabase.createClient('https://tacvlueakxokrzvtxpnx.supabase.co','sb_publishable_cdyFDjwbzCdgAVpg2-nOUQ_3mz0410G'),$=id=>document.getElementById(id),BUCKET='get-saucy-posts';
+let moderator=null;
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function message(text,error=false){$('notice').textContent=text;$('notice').classList.toggle('error',error);$('notice').classList.remove('hidden')}
+function niceDate(value){return new Date(value).toLocaleString()}
+async function profileMap(ids){if(!ids.length)return{};const {data,error}=await db.from('profiles').select('user_id,display_name,business_name').in('user_id',ids);if(error)throw error;return Object.fromEntries(data.map(p=>[p.user_id,p]))}
+function createCase(post, extra={}){
+ const node=document.createElement('article');node.className='case';
+ const profile=extra.profile||{},author=profile.business_name||profile.display_name||'Get Saucy member';
+ const head=document.createElement('div');head.className='case-head';
+ const left=document.createElement('div');
+ left.innerHTML='<h2>'+esc(post.title||'Community post')+'</h2><div class="meta">Posted by '+esc(author)+' · '+niceDate(post.created_at)+' · Status: '+esc(post.status||'published')+'</div>';
+ const status=document.createElement('span');status.className='pending-badge';status.textContent=extra.report?'PENDING REPORT':'MODERATED';
+ head.append(left,status);node.append(head);
+ if(extra.report){const reason=document.createElement('div');reason.className='reason';reason.textContent='Report reason: '+extra.report.reason+' — submitted '+niceDate(extra.report.created_at);node.append(reason)}
+ if(post.caption){const caption=document.createElement('p');caption.textContent=post.caption;node.append(caption)}
+ if(post.media_path){const url=db.storage.from(BUCKET).getPublicUrl(post.media_path).data.publicUrl;const media=post.media_type==='video'?document.createElement('video'):document.createElement('img');media.src=url;media.className='media';if(media.tagName==='VIDEO'){media.controls=true;media.playsInline=true}else media.alt='Reported community post';node.append(media)}
+ const actions=document.createElement('div');actions.className='actions';
+ if(extra.report){actions.append(
+   action('Hide post','hide',()=>resolve(extra.report,post,'hidden')),
+   action('Remove post','remove',()=>resolve(extra.report,post,'removed')),
+   action('Dismiss report','',()=>dismiss(extra.report))
+ )}
+ if(!extra.report)actions.append(action('Restore to feed','restore',()=>restore(post)));
+ node.append(actions);return node
+}
+function action(label,style,handler){const b=document.createElement('button');b.textContent=label;if(style)b.classList.add(style);b.onclick=handler;return b}
+async function loadPending(){
+ const box=$('pending-list');box.innerHTML='<div class="empty">Loading reports…</div>';
+ const {data:reports,error}=await db.from('post_reports').select('id,post_id,reporter_id,reason,status,created_at').eq('status','pending').order('created_at',{ascending:true}).limit(100);
+ if(error)throw error;
+ if(!reports?.length){box.innerHTML='<div class="panel empty">No pending reports. Nice work keeping the community welcoming.</div>';return}
+ const postIds=[...new Set(reports.map(r=>r.post_id))];
+ const {data:posts,error:postError}=await db.from('posts').select('id,user_id,post_type,media_type,media_path,title,caption,status,created_at').in('id',postIds);
+ if(postError)throw postError;const byId=Object.fromEntries((posts||[]).map(p=>[p.id,p]));
+ const profiles=await profileMap([...new Set((posts||[]).map(p=>p.user_id))]);box.replaceChildren();
+ for(const report of reports){const post=byId[report.post_id];if(!post)continue;box.append(createCase(post,{report,profile:profiles[post.user_id]}))}
+ if(!box.children.length)box.innerHTML='<div class="panel empty">Reported posts may have been deleted.</div>'
+}
+async function loadHidden(){
+ const box=$('hidden-list');box.innerHTML='<div class="empty">Loading hidden posts…</div>';
+ const {data:posts,error}=await db.from('posts').select('id,user_id,post_type,media_type,media_path,title,caption,status,created_at').in('status',['hidden','removed']).order('created_at',{ascending:false}).limit(100);
+ if(error)throw error;if(!posts?.length){box.innerHTML='<div class="panel empty">No hidden or removed posts.</div>';return}
+ const profiles=await profileMap([...new Set(posts.map(p=>p.user_id))]);box.replaceChildren();for(const post of posts)box.append(createCase(post,{profile:profiles[post.user_id]}))
+}
+async function resolve(report,post,statusValue){
+ const label=statusValue==='hidden'?'Hide this post': 'Remove this post';
+ if(!confirm(label+' from the public feed? The action can be reversed later.'))return;
+ const {error:postError}=await db.from('posts').update({status:statusValue,moderated_at:new Date().toISOString(),moderated_by:moderator.id,moderation_note:report.reason}).eq('id',post.id);
+ if(postError){message(postError.message,true);return}
+ const {error:reportError}=await db.from('post_reports').update({status:'reviewed',reviewed_at:new Date().toISOString(),reviewed_by:moderator.id,resolution:statusValue==='hidden'?'Post hidden':'Post removed'}).eq('id',report.id);
+ if(reportError){message('Post action succeeded, but report update failed: '+reportError.message,true);return}
+ message(statusValue==='hidden'?'Post hidden from the public feed.':'Post removed from the public feed.');await refreshBoth()
+}
+async function dismiss(report){
+ const {error}=await db.from('post_reports').update({status:'dismissed',reviewed_at:new Date().toISOString(),reviewed_by:moderator.id,resolution:'Report dismissed'}).eq('id',report.id);
+ if(error){message(error.message,true);return}message('Report dismissed. The post remains published.');await refreshBoth()
+}
+async function restore(post){
+ if(!confirm('Restore this post to the public feed?'))return;
+ const {error}=await db.from('posts').update({status:'published',moderated_at:new Date().toISOString(),moderated_by:moderator.id,moderation_note:'Restored by moderator'}).eq('id',post.id);
+ if(error){message(error.message,true);return}message('Post restored to the community feed.');await loadHidden()
+}
+async function refreshBoth(){try{await Promise.all([loadPending(),loadHidden()])}catch(e){message(e.message,true)}}
+$('pending-tab').onclick=()=>{$('pending-section').classList.remove('hidden');$('hidden-section').classList.add('hidden');$('pending-tab').classList.add('active');$('hidden-tab').classList.remove('active')};
+$('hidden-tab').onclick=()=>{$('pending-section').classList.add('hidden');$('hidden-section').classList.remove('hidden');$('hidden-tab').classList.add('active');$('pending-tab').classList.remove('active')};
+$('refresh').onclick=()=>refreshBoth();
+$('signout').onclick=async e=>{e.preventDefault();await db.auth.signOut();location.href='signup.html'};
+async function init(){
+ const {data:{session}}=await db.auth.getSession();const user=session?.user;
+ if(!user){$('auth-panel').classList.remove('hidden');return}
+ if(!['moderator','admin'].includes(user.app_metadata?.role)){message('This account does not have moderator access.',true);$('auth-panel').classList.remove('hidden');return}
+ moderator=user;$('dashboard').classList.remove('hidden');await refreshBoth()
+}
+init().catch(e=>message(e.message,true));
+</script>
+</body></html>
