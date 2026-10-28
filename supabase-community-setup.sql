@@ -245,3 +245,79 @@ grant select, update on public.post_reports to authenticated;
 -- update auth.users
 -- set raw_app_meta_data = coalesce(raw_app_meta_data, '{}'::jsonb) || '{"role":"moderator"}'::jsonb
 -- where email = 'YOUR_TRUSTED_SIGN_IN_EMAIL';
+
+
+-- Saved recipes, follows, and activity notifications.
+create table if not exists public.saved_posts (
+ user_id uuid not null references public.profiles(user_id) on delete cascade,
+ post_id uuid not null references public.posts(id) on delete cascade,
+ created_at timestamptz not null default now(),
+ primary key(user_id,post_id)
+);
+alter table public.saved_posts enable row level security;
+drop policy if exists "Users read own saved posts" on public.saved_posts;
+create policy "Users read own saved posts" on public.saved_posts for select to authenticated using(auth.uid()=user_id);
+drop policy if exists "Users save posts" on public.saved_posts;
+create policy "Users save posts" on public.saved_posts for insert to authenticated with check(auth.uid()=user_id);
+drop policy if exists "Users unsave posts" on public.saved_posts;
+create policy "Users unsave posts" on public.saved_posts for delete to authenticated using(auth.uid()=user_id);
+grant select,insert,delete on public.saved_posts to authenticated;
+
+create table if not exists public.follows (
+ follower_id uuid not null references public.profiles(user_id) on delete cascade,
+ followed_id uuid not null references public.profiles(user_id) on delete cascade,
+ created_at timestamptz not null default now(),
+ primary key(follower_id,followed_id),
+ constraint follows_not_self check(follower_id<>followed_id)
+);
+create index if not exists follows_followed_idx on public.follows(followed_id);
+alter table public.follows enable row level security;
+drop policy if exists "Following list is public" on public.follows;
+create policy "Following list is public" on public.follows for select using(true);
+drop policy if exists "Users follow as themselves" on public.follows;
+create policy "Users follow as themselves" on public.follows for insert to authenticated with check(auth.uid()=follower_id);
+drop policy if exists "Users unfollow as themselves" on public.follows;
+create policy "Users unfollow as themselves" on public.follows for delete to authenticated using(auth.uid()=follower_id);
+grant select on public.follows to anon,authenticated;
+grant insert,delete on public.follows to authenticated;
+
+create table if not exists public.notifications (
+ id uuid primary key default gen_random_uuid(),
+ recipient_id uuid not null references public.profiles(user_id) on delete cascade,
+ actor_id uuid not null references public.profiles(user_id) on delete cascade,
+ kind text not null check(kind in ('comment','reaction','follow')),
+ post_id uuid references public.posts(id) on delete set null,
+ created_at timestamptz not null default now(),
+ read_at timestamptz
+);
+create index if not exists notifications_recipient_created_idx on public.notifications(recipient_id,created_at desc);
+alter table public.notifications enable row level security;
+drop policy if exists "Users read own notifications" on public.notifications;
+create policy "Users read own notifications" on public.notifications for select to authenticated using(auth.uid()=recipient_id);
+drop policy if exists "Users update own notifications" on public.notifications;
+create policy "Users update own notifications" on public.notifications for update to authenticated using(auth.uid()=recipient_id) with check(auth.uid()=recipient_id);
+drop policy if exists "Users delete own notifications" on public.notifications;
+create policy "Users delete own notifications" on public.notifications for delete to authenticated using(auth.uid()=recipient_id);
+grant select,update,delete on public.notifications to authenticated;
+
+create or replace function public.get_saucy_notify_comment() returns trigger language plpgsql security definer set search_path=public as $$
+declare recipient uuid;
+begin select user_id into recipient from public.posts where id=new.post_id;
+ if recipient is not null and recipient<>new.user_id then insert into public.notifications(recipient_id,actor_id,kind,post_id) values(recipient,new.user_id,'comment',new.post_id); end if;
+ return new; end; $$;
+drop trigger if exists get_saucy_comment_notification on public.comments;
+create trigger get_saucy_comment_notification after insert on public.comments for each row execute function public.get_saucy_notify_comment();
+
+create or replace function public.get_saucy_notify_reaction() returns trigger language plpgsql security definer set search_path=public as $$
+declare recipient uuid;
+begin if tg_op='UPDATE' and old.emoji is not distinct from new.emoji then return new; end if;
+ select user_id into recipient from public.posts where id=new.post_id;
+ if recipient is not null and recipient<>new.user_id then insert into public.notifications(recipient_id,actor_id,kind,post_id) values(recipient,new.user_id,'reaction',new.post_id); end if;
+ return new; end; $$;
+drop trigger if exists get_saucy_reaction_notification on public.post_reactions;
+create trigger get_saucy_reaction_notification after insert or update of emoji on public.post_reactions for each row execute function public.get_saucy_notify_reaction();
+
+create or replace function public.get_saucy_notify_follow() returns trigger language plpgsql security definer set search_path=public as $$
+begin insert into public.notifications(recipient_id,actor_id,kind) values(new.followed_id,new.follower_id,'follow'); return new; end; $$;
+drop trigger if exists get_saucy_follow_notification on public.follows;
+create trigger get_saucy_follow_notification after insert on public.follows for each row execute function public.get_saucy_notify_follow();
