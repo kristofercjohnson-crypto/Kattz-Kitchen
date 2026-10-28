@@ -28,7 +28,7 @@ input,textarea,select{width:100%;padding:11px 12px;margin:7px 0 10px;border:1px 
 </style>
 </head>
 <body><div class="shell">
-<header><a class="brand" href="index.html"><img src="katt-mascot.png" alt=""><span>GET <em>Saucy</em></span></a><nav class="header-actions"><a href="locator.html">Food Truck Map</a><a href="index.html">Home</a><a id="account-link" href="signup.html">Sign in</a></nav></header>
+<header><a class="brand" href="index.html"><img src="katt-mascot.png" alt=""><span>GET <em>Saucy</em></span></a><nav class="header-actions"><a href="locator.html">Food Truck Map</a><a href="moderation.html" id="moderation-link" class="hidden">Moderation</a><a href="index.html">Home</a><a id="account-link" href="signup.html">Sign in</a></nav></header>
 <h1>Get Saucy <em>Community</em></h1><p class="lead">Share what you’re making, trade ideas, and show some love. 🍽️🔥</p>
 <div class="layout">
 <main>
@@ -118,7 +118,7 @@ async function loadFeed(){
 async function init(){
  const {data:{session}}=await db.auth.getSession();currentUser=session?.user||null;
  $('composer').classList.toggle('hidden',!currentUser);$('sign-in-needed').classList.toggle('hidden',!!currentUser);
- $('account-link').textContent=currentUser?'Sign out':'Sign in';$('account-link').href=currentUser?'#signout':'signup.html';
+ $('moderation-link').classList.toggle('hidden',!['moderator','admin'].includes(currentUser?.app_metadata?.role));\n $('account-link').textContent=currentUser?'Sign out':'Sign in';$('account-link').href=currentUser?'#signout':'signup.html';
  if(currentUser)$('account-link').onclick=async e=>{e.preventDefault();await db.auth.signOut();location.reload()};
  $('refresh').onclick=loadFeed;
  await loadFeed();
