@@ -188,3 +188,60 @@ using (bucket_id = 'get-saucy-posts' and (storage.foldername(name))[1] = auth.ui
 -- Video duration is enforced in the browser for the free launch experience (maximum 15 seconds).
 -- VIP videos up to 10 minutes should be enabled only after subscription verification is implemented.
 -- The publishable Supabase key is safe for browser use; never place a service-role key in this website.
+
+
+-- Moderation workflow. Roles are read from Supabase app_metadata, which clients cannot edit.
+alter table public.posts
+  add column if not exists status text not null default 'published'
+    check (status in ('published','hidden','removed')),
+  add column if not exists moderated_at timestamptz,
+  add column if not exists moderated_by uuid references auth.users(id) on delete set null,
+  add column if not exists moderation_note text not null default '';
+
+alter table public.post_reports
+  add column if not exists status text not null default 'pending'
+    check (status in ('pending','reviewed','dismissed')),
+  add column if not exists reviewed_at timestamptz,
+  add column if not exists reviewed_by uuid references auth.users(id) on delete set null,
+  add column if not exists resolution text not null default '';
+
+create index if not exists posts_moderation_status_idx on public.posts (status, created_at desc);
+create index if not exists post_reports_pending_idx on public.post_reports (status, created_at desc);
+
+-- Public visitors see published posts. Authors can still view their own posts.
+-- Trusted moderators can view and act on all posts.
+drop policy if exists "Posts are public" on public.posts;
+create policy "Published posts and authorized review" on public.posts
+for select using (
+  status = 'published'
+  or auth.uid() = user_id
+  or coalesce(auth.jwt()->'app_metadata'->>'role','') in ('moderator','admin')
+);
+drop policy if exists "Users update own posts" on public.posts;
+create policy "Authors and moderators update posts" on public.posts
+for update to authenticated
+using (
+  auth.uid() = user_id
+  or coalesce(auth.jwt()->'app_metadata'->>'role','') in ('moderator','admin')
+)
+with check (
+  auth.uid() = user_id
+  or coalesce(auth.jwt()->'app_metadata'->>'role','') in ('moderator','admin')
+);
+
+drop policy if exists "Moderators read reports" on public.post_reports;
+create policy "Moderators read reports" on public.post_reports
+for select to authenticated
+using (coalesce(auth.jwt()->'app_metadata'->>'role','') in ('moderator','admin'));
+drop policy if exists "Moderators update reports" on public.post_reports;
+create policy "Moderators update reports" on public.post_reports
+for update to authenticated
+using (coalesce(auth.jwt()->'app_metadata'->>'role','') in ('moderator','admin'))
+with check (coalesce(auth.jwt()->'app_metadata'->>'role','') in ('moderator','admin'));
+grant select, update on public.post_reports to authenticated;
+
+-- Grant moderator access only to trusted accounts. Replace the placeholder and
+-- run this separately in the Supabase SQL Editor; never use user_metadata for roles.
+-- update auth.users
+-- set raw_app_meta_data = coalesce(raw_app_meta_data, '{}'::jsonb) || '{"role":"moderator"}'::jsonb
+-- where email = 'YOUR_TRUSTED_SIGN_IN_EMAIL';
