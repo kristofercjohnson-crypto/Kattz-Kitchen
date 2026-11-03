@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080808">
+<title>Get Saucy Community</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#080808;--panel:#12100d;--panel2:#19160f;--gold:#e8b84e;--gold2:#ffd986;--cream:#fff4df;--muted:#c5b9a8;--line:#665027;--red:#b9361d}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#37280f 0,#131109 28%,#080808 65%);color:var(--cream);font:14px 'DM Sans',Arial,sans-serif}a{color:var(--gold2);text-decoration:none}button,input,textarea,select{font:inherit}.shell{width:min(100% - 24px,900px);margin:0 auto;padding:14px 0 55px}
+header{position:sticky;top:0;z-index:4;display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#090909ed;border:1px solid #e8b84e50;border-radius:14px;backdrop-filter:blur(12px)}
+.brand{display:flex;align-items:center;gap:9px;color:var(--gold);font-size:19px;font-weight:900;font-style:italic}.brand img{width:39px;height:39px;object-fit:contain}.brand em{font:30px 'Great Vibes',cursive}
+.header-actions{display:flex;gap:14px;align-items:center;font-weight:700;font-size:12px}
+h1{margin:24px 3px 4px;font-size:clamp(27px,5vw,40px)}h1 em{font:1.15em 'Great Vibes',cursive;color:var(--gold)}.lead{margin:0 3px 19px;color:var(--muted);line-height:1.5}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:18px;align-items:start}
+.panel,.post{background:linear-gradient(145deg,#18150f,#0e0d0b);border:1px solid #e8b84e55;border-radius:16px;box-shadow:0 12px 35px #0005}
+.composer{padding:17px;margin-bottom:18px}.composer h2,.side h2{margin:0 0 6px;font-size:17px}.hint,.side p{color:var(--muted);font-size:12px;line-height:1.5;margin:0 0 14px}
+input,textarea,select{width:100%;padding:11px 12px;margin:7px 0 10px;border:1px solid #6b5735;border-radius:9px;background:#090909;color:var(--cream);outline:0}input:focus,textarea:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 3px #e8b84e1c}textarea{min-height:80px;resize:vertical}input[type=file]{padding:9px}input[type=file]::file-selector-button{border:1px solid var(--gold);border-radius:7px;background:#211b0e;color:var(--gold2);padding:8px 10px;margin-right:9px}
+.label{display:block;margin-top:6px;font-size:11px;font-weight:800;color:#f3dfbb}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{border:0;border-radius:9px;padding:11px 15px;background:linear-gradient(110deg,#c28b2c,#ffd36b);color:#1b1308;font-weight:900;cursor:pointer}.btn.ghost{border:1px solid #806c43;background:#17140f;color:var(--gold2)}.btn:disabled{opacity:.58;cursor:wait}.actionrow{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.status{display:none;margin:10px 0 0;padding:10px 12px;border-radius:9px;background:#241b0d;border:1px solid #896b32;color:#f6d88e;font-size:12px;line-height:1.5}.status.show{display:block}.status.error{background:#29120f;border-color:#9b3b2a;color:#ffb4a2}
+.preview{display:none;margin:8px 0 12px;max-width:100%;max-height:260px;border-radius:12px;border:1px solid #5c4829}.side{padding:17px;position:sticky;top:78px}.side h2:not(:first-child){margin-top:20px}.mini{border-top:1px solid #493b25;padding:12px 0 0;margin-top:12px}
+.feed-head{display:flex;justify-content:space-between;align-items:center;margin:0 2px 10px}.feed-head h2{margin:0;font-size:18px}.feed-head button{border:0;background:none;color:var(--gold2);font-weight:800;cursor:pointer}
+.post{overflow:hidden;margin:0 0 17px}.post-head{display:flex;justify-content:space-between;align-items:center;padding:13px 14px 10px}.person{display:flex;align-items:center;gap:10px;min-width:0}.avatar{width:37px;height:37px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(145deg,#73521a,#251909);color:var(--gold);font-weight:900;overflow:hidden}.avatar img{width:100%;height:100%;object-fit:cover}.author{font-size:13px;font-weight:900}.meta{margin-top:3px;color:var(--muted);font-size:10px}.post-type{color:var(--gold2);font-size:10px;font-weight:800}.media{display:block;width:100%;max-height:560px;object-fit:contain;background:#050505}.post-body{padding:11px 14px 14px}.post-title{font-weight:900;margin:0 0 5px}.caption{line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}.recipe{margin-top:11px;padding-top:10px;border-top:1px solid #514127}.recipe strong{color:var(--gold2)}.recipe p{white-space:pre-wrap;line-height:1.55;color:#e6d7c3;font-size:12px}
+.reactions{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 9px}.react{border:1px solid #634f31;background:#17140f;color:var(--cream);border-radius:20px;padding:6px 9px;cursor:pointer}.react.active{border-color:var(--gold);background:#352810}.comment-area{border-top:1px solid #4d3c25;padding-top:10px}.comment-list{margin:0 0 8px}.comment{margin:6px 0;font-size:12px;line-height:1.45}.comment b{color:var(--gold2)}.comment-form{display:flex;gap:7px}.comment-form input{margin:0;min-width:0;padding:9px}.comment-form button{flex:0 0 auto}.post-tools{display:flex;gap:12px;margin-top:9px;font-size:11px}.link-btn{padding:0;border:0;background:none;color:var(--muted);font-size:11px;cursor:pointer}.link-btn:hover{color:var(--gold2)}
+.empty{padding:28px 17px;text-align:center;color:var(--muted);line-height:1.6}.empty strong{display:block;margin-bottom:8px;color:var(--gold2);font-size:17px}
+.hidden{display:none!important}.small{font-size:11px;color:var(--muted);line-height:1.55}
+@media(max-width:740px){.layout{grid-template-columns:1fr}.side{position:static;order:-1}.shell{width:min(100% - 18px,650px)}}@media(max-width:430px){.header-actions{gap:8px;font-size:10px}.row{grid-template-columns:1fr}.actionrow{align-items:stretch}.actionrow .btn{flex:1}}
+</style>
+</head>
+<body><div class="shell">
+<header><a class="brand" href="index.html"><img src="katt-mascot.png" alt=""><span>GET <em>Saucy</em></span></a><nav class="header-actions"><a href="locator.html">Food Truck Map</a><a href="profile.html" id="profile-link" class="hidden">My profile</a><a href="moderation.html" id="moderation-link" class="hidden">Moderation</a><a href="index.html">Home</a><a id="account-link" href="signup.html">Sign in</a></nav></header>
+<h1>Get Saucy <em>Community</em></h1><p class="lead">Share what you’re making, trade ideas, and show some love. 🍽️🔥</p>
+<div class="layout">
+<main>
+<section class="panel composer">
+<h2>Make a post</h2><p class="hint">Share a food photo or video. Recipes can include ingredients and steps. Posts are public and media can be downloaded, so share only content you own or have permission to post.</p>
+<div id="sign-in-needed" class="small">Sign in to post, comment, and react. <a href="signup.html">Create your free account →</a></div>
+<form id="composer" class="hidden">
+<label class="label" for="post-type">Post type</label><select id="post-type"><option value="food">Food photo / video</option><option value="recipe">Recipe</option></select>
+<div class="row"><div><label class="label" for="media-file">Add a photo or video</label><input id="media-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime"></div>
+<div><label class="label" for="post-title">Title (optional)</label><input id="post-title" maxlength="120" placeholder="Name your dish"></div></div>
+<label class="label" for="caption">Caption</label><textarea id="caption" maxlength="2000" placeholder="Tell us about it…"></textarea>
+<div id="recipe-fields" class="hidden"><label class="label" for="ingredients">Ingredients</label><textarea id="ingredients" maxlength="5000" placeholder="List ingredients, one per line"></textarea><label class="label" for="instructions">Steps</label><textarea id="instructions" maxlength="10000" placeholder="Add the cooking steps"></textarea></div>
+<div id="file-preview" class="preview"></div>
+<div class="actionrow"><span class="small">Free launch video limit: 15 seconds. Max file size: 50 MB.</span><button class="btn" id="publish" type="submit">Share with the community</button></div>
+<div id="composer-status" class="status" role="status" aria-live="polite"></div>
+</form>
+</section>
+<div class="feed-head"><h2>Community feed</h2><div class="feed-controls"><input id="feed-search" type="search" placeholder="Search recent posts…" aria-label="Search recent posts"><button id="refresh">↻ Refresh</button></div></div>
+<div id="feed"><div class="panel empty"><strong>Loading the food feed…</strong>One moment.</div></div>
+</main>
+<aside class="panel side"><h2>Let’s keep it fun</h2><p>Be kind, credit recipes and photos that aren’t yours, and share only content you have permission to post.</p><p>React with ❤️, 😋, 🔥, 👏, or 😂. Report anything that breaks the community rules.</p><div class="mini"><h2>Food businesses</h2><p>Share your story and menu here. Customers contact you directly to order; payments stay outside the app.</p></div><div class="mini"><h2>VIP videos</h2><p>Longer tutorials up to 10 minutes can come with VIP after subscription billing is set up. For now, videos are limited to 15 seconds.</p></div></aside>
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const SUPABASE_URL='https://tacvlueakxokrzvtxpnx.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_cdyFDjwbzCdgAVpg2-nOUQ_3mz0410G';
+const BUCKET='get-saucy-posts',MAX_FILE=50*1024*1024,MAX_VIDEO_SECONDS=15;
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY),$=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const status=(message,error=false)=>{$('composer-status').textContent=message;$('composer-status').classList.toggle('error',error);$('composer-status').classList.add('show')};
+let currentUser=null,profiles={},currentReactions={},savedPostIds=new Set(),followedUsers=new Set();
+const emoji=['❤️','😋','🔥','👏','😂'];
+const postFile=$('media-file'),preview=$('file-preview');
+$('post-type').addEventListener('change',()=>{$('recipe-fields').classList.toggle('hidden',$('post-type').value!=='recipe')});
+postFile.addEventListener('change',async()=>{
+  preview.replaceChildren();preview.className='preview';
+  const file=postFile.files?.[0];if(!file)return;
+  if(file.size>MAX_FILE){postFile.value='';status('That file is over 50 MB. Choose a smaller photo or video.',true);return}
+  const isImage=file.type.startsWith('image/'),isVideo=file.type.startsWith('video/');
+  if(!isImage&&!isVideo){postFile.value='';status('Choose a JPG, PNG, WebP, GIF, MP4, WebM, or QuickTime file.',true);return}
+  if(isVideo){
+    const temp=document.createElement('video');temp.preload='metadata';temp.src=URL.createObjectURL(file);
+    await new Promise(resolve=>{temp.onloadedmetadata=resolve;temp.onerror=resolve});
+    const duration=temp.duration;URL.revokeObjectURL(temp.src);
+    if(Number.isFinite(duration)&&duration>MAX_VIDEO_SECONDS){postFile.value='';status('Free launch videos can be up to 15 seconds. Longer VIP videos will be added after subscriptions are ready.',true);return}
+  }
+  const node=document.createElement(isVideo?'video':'img');node.src=URL.createObjectURL(file);node.className='preview';if(isVideo){node.controls=true;node.muted=true}
+  preview.append(node);preview.style.display='block';$('composer-status').classList.remove('show');
+});
+async function profileMap(ids){if(!ids.length)return{};const {data,error}=await db.from('profiles').select('user_id,account_type,display_name,city,business_name').in('user_id',ids);if(error)throw error;return Object.fromEntries((data||[]).map(p=>[p.user_id,p]))}
+function timeAgo(value){const seconds=Math.max(0,(Date.now()-new Date(value).getTime())/1000);if(seconds<60)return'just now';if(seconds<3600)return Math.floor(seconds/60)+'m ago';if(seconds<86400)return Math.floor(seconds/3600)+'h ago';return Math.floor(seconds/86400)+'d ago'}
+function makePost(post,comments,reactions){
+ const author=profiles[post.user_id]||{},name=author.account_type==='business'?(author.business_name||author.display_name):(author.display_name||'Get Saucy member');
+ const card=document.createElement('article');card.className='post';card.dataset.id=post.id;card.id='post-'+post.id;card.dataset.search=[post.title,post.caption,author,author.city].join(' ').toLowerCase();
+ const head=document.createElement('div');head.className='post-head';head.innerHTML='<div class="person"><div class="avatar">🍽️</div><div><div class="author">'+esc(name)+'</div><div class="meta">'+esc(author.city||'')+(author.city?' · ':'')+timeAgo(post.created_at)+'</div></div></div><span class="post-type">'+(post.post_type==='recipe'?'RECIPE':'FOOD POST')+'</span>';card.append(head);
+ if(post.media_path){const url=db.storage.from(BUCKET).getPublicUrl(post.media_path).data.publicUrl;let media;if(post.media_type==='video'){media=document.createElement('video');media.controls=true;media.playsInline=true}else{media=document.createElement('img');media.alt=post.title||'Get Saucy food post'}media.className='media';media.src=url;card.append(media)}
+ const body=document.createElement('div');body.className='post-body';if(post.title){const title=document.createElement('p');title.className='post-title';title.textContent=post.title;body.append(title)}
+ if(post.caption){const caption=document.createElement('div');caption.className='caption';caption.textContent=post.caption;body.append(caption)}
+ if(post.post_type==='recipe'){const recipe=document.createElement('div');recipe.className='recipe';recipe.innerHTML='<strong>Ingredients</strong><p>'+esc(post.ingredients||'Not listed')+'</p><strong>Steps</strong><p>'+esc(post.instructions||'Not listed')+'</p>';body.append(recipe)}
+ const reactionsWrap=document.createElement('div');reactionsWrap.className='reactions';const counts=Object.fromEntries(emoji.map(e=>[e,0]));for(const r of reactions){if(counts[r.emoji]!=null)counts[r.emoji]++}
+ for(const e of emoji){const btn=document.createElement('button');btn.className='react'+(currentReactions[post.id]===e?' active':'');btn.type='button';btn.textContent=e+' '+counts[e];btn.setAttribute('aria-label','React '+e);btn.onclick=()=>react(post.id,e);if(!currentUser)btn.title='Sign in to react';reactionsWrap.append(btn)}body.append(reactionsWrap);
+ const commentsBox=document.createElement('div');commentsBox.className='comment-area';const commentList=document.createElement('div');commentList.className='comment-list';
+ for(const c of comments){const p=profiles[c.user_id]||{},n=p.account_type==='business'?(p.business_name||p.display_name):(p.display_name||'Member');const row=document.createElement('div');row.className='comment';row.innerHTML='<b>'+esc(n)+'</b> '+esc(c.body);commentList.append(row)}
+ commentsBox.append(commentList);if(currentUser){const form=document.createElement('form');form.className='comment-form';const input=document.createElement('input');input.maxLength=1000;input.required=true;input.placeholder='Add a comment…';input.setAttribute('aria-label','Add a comment');const button=document.createElement('button');button.type='submit';button.className='btn';button.textContent='Post';form.append(input,button);form.onsubmit=async ev=>{ev.preventDefault();button.disabled=true;const {error}=await db.from('comments').insert({post_id:post.id,user_id:currentUser.id,body:input.value.trim()});if(error){button.disabled=false;alert(error.message);return}await loadFeed()};commentsBox.append(form)}else{const prompt=document.createElement('div');prompt.className='small';prompt.innerHTML='<a href="signup.html">Sign in</a> to join the conversation.';commentsBox.append(prompt)}
+ const tools=document.createElement('div');tools.className='post-tools';const download=document.createElement('button');download.type='button';download.className='link-btn';download.textContent='Download media';download.onclick=async()=>{if(!post.media_path)return;try{const u=db.storage.from(BUCKET).getPublicUrl(post.media_path).data.publicUrl;const response=await fetch(u);if(!response.ok)throw Error('Download unavailable');const blob=await response.blob(),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(post.title||'get-saucy-post').replace(/[^a-z0-9-_ ]/gi,'')+(post.media_type==='video'?'.mp4':'.jpg');a.click();URL.revokeObjectURL(a.href)}catch(e){window.open(db.storage.from(BUCKET).getPublicUrl(post.media_path).data.publicUrl,'_blank','noopener')}}
+ const report=document.createElement('button');report.type='button';report.className='link-btn';report.textContent='Report';report.onclick=async()=>{if(!currentUser){location.href='signup.html';return}const reason=prompt('What is the concern? (spam, harmful, stolen, or other)');if(!reason)return;const {error}=await db.from('post_reports').insert({post_id:post.id,reporter_id:currentUser.id,reason:reason.slice(0,300)});alert(error?error.message:'Thanks. Your report was recorded.')};tools.append(download,report);if(currentUser&&currentUser.id!==post.user_id){const f=document.createElement("button");f.type="button";f.className="link-btn";f.textContent=followedUsers.has(post.user_id)?"Following":"Follow";f.onclick=()=>toggleFollow(post.user_id);tools.append(f)}if(currentUser&&post.post_type==="recipe"){const b=document.createElement("button");b.type="button";b.className="link-btn";b.textContent=savedPostIds.has(post.id)?"Saved recipe":"Save recipe";b.onclick=()=>toggleSave(post.id);tools.append(b)}if(currentUser&&currentUser.id===post.user_id){const e=document.createElement("button");e.type="button";e.className="link-btn";e.textContent="Edit";e.onclick=()=>editPost(post);const d=document.createElement("button");d.type="button";d.className="link-btn";d.textContent="Delete";d.onclick=()=>deletePost(post);tools.append(e,d)}commentsBox.append(tools);body.append(commentsBox);card.append(body);return card
+}
+async function toggleFollow(id){if(!currentUser)return;const q=followedUsers.has(id)?db.from('follows').delete().eq('follower_id',currentUser.id).eq('followed_id',id):db.from('follows').insert({follower_id:currentUser.id,followed_id:id});const {error}=await q;if(error){alert(error.message);return}await loadFeed()}
+async function toggleSave(id){if(!currentUser)return;const q=savedPostIds.has(id)?db.from('saved_posts').delete().eq('user_id',currentUser.id).eq('post_id',id):db.from('saved_posts').insert({user_id:currentUser.id,post_id:id});const {error}=await q;if(error){alert(error.message);return}await loadFeed()}
+async function editPost(p){const title=prompt('Edit title:',p.title||'');if(title===null)return;const caption=prompt('Edit caption:',p.caption||'');if(caption===null)return;let ingredients=p.ingredients||'',instructions=p.instructions||'';if(p.post_type==='recipe'){ingredients=prompt('Edit ingredients:',ingredients);if(ingredients===null)return;instructions=prompt('Edit steps:',instructions);if(instructions===null)return}const {error}=await db.from('posts').update({title:title.slice(0,120),caption:caption.slice(0,2000),ingredients:ingredients.slice(0,5000),instructions:instructions.slice(0,10000)}).eq('id',p.id).eq('user_id',currentUser.id);if(error){alert(error.message);return}await loadFeed()}
+async function deletePost(p){if(!confirm('Delete this post and its comments and reactions?'))return;const {error}=await db.from('posts').delete().eq('id',p.id).eq('user_id',currentUser.id);if(error){alert(error.message);return}if(p.media_path)await db.storage.from(BUCKET).remove([p.media_path]);await loadFeed()}
+async function react(postId,emojiValue){if(!currentUser){location.href='signup.html';return}const mine=currentReactions[postId];let result;if(mine===emojiValue)result=await db.from('post_reactions').delete().eq('post_id',postId).eq('user_id',currentUser.id);else result=await db.from('post_reactions').upsert({post_id:postId,user_id:currentUser.id,emoji:emojiValue});if(result.error){alert(result.error.message);return}await loadFeed()}
+async function loadFeed(){
+ const box=$('feed');box.innerHTML='<div class="panel empty"><strong>Loading the food feed…</strong>One moment.</div>';
+ const {data:posts,error}=await db.from('posts').select('id,user_id,post_type,media_type,media_path,title,caption,ingredients,instructions,created_at').order('created_at',{ascending:false}).limit(40);
+ if(error){box.innerHTML='<div class="panel empty"><strong>Community feed needs its Supabase setup.</strong>Run supabase-community-setup.sql in your Supabase SQL Editor, then refresh this page.</div>';return}
+ if(!posts?.length){box.innerHTML='<div class="panel empty"><strong>Be the first to post!</strong>Share a food photo, video, or recipe to start the community feed.</div>';return}
+ const ids=posts.map(p=>p.id),userIds=[...new Set(posts.map(p=>p.user_id))];
+ try{
+ profiles=await profileMap(userIds);
+ const [{data:comments,error:commentError},{data:reactions,error:reactionError}]=await Promise.all([
+  db.from('comments').select('id,post_id,user_id,body,created_at').in('post_id',ids).order('created_at',{ascending:true}),
+  db.from('post_reactions').select('post_id,user_id,emoji').in('post_id',ids)
+ ]);
+ if(commentError)throw commentError;if(reactionError)throw reactionError;
+ if(currentUser){const [{data:saves,error:se},{data:follows,error:fe}]=await Promise.all([db.from('saved_posts').select('post_id').eq('user_id',currentUser.id),db.from('follows').select('followed_id').eq('follower_id',currentUser.id)]);if(se)throw se;if(fe)throw fe;savedPostIds=new Set((saves||[]).map(x=>x.post_id));followedUsers=new Set((follows||[]).map(x=>x.followed_id))}
+ const profilesFor=await profileMap([...new Set([...(comments||[]).map(x=>x.user_id)])]);profiles={...profiles,...profilesFor};
+ currentReactions=Object.fromEntries((reactions||[]).filter(r=>r.user_id===currentUser?.id).map(r=>[r.post_id,r.emoji]));
+ box.replaceChildren();for(const p of posts)box.append(makePost(p,(comments||[]).filter(c=>c.post_id===p.id),(reactions||[]).filter(r=>r.post_id===p.id)))
+ }catch(e){box.innerHTML='<div class="panel empty"><strong>Could not load community activity.</strong>'+esc(e.message)+'</div>'}
+}
+async function init(){
+ const {data:{session}}=await db.auth.getSession();currentUser=session?.user||null;
+ $('composer').classList.toggle('hidden',!currentUser);$('sign-in-needed').classList.toggle('hidden',!!currentUser);
+ $('moderation-link').classList.toggle('hidden',!['moderator','admin'].includes(currentUser?.app_metadata?.role));\n $('profile-link').classList.toggle('hidden',!currentUser);$('moderation-link').classList.toggle('hidden',!['moderator','admin'].includes(currentUser?.app_metadata?.role));$('account-link').textContent=currentUser?'Sign out':'Sign in';$('account-link').href=currentUser?'#signout':'signup.html';
+ if(currentUser)$('account-link').onclick=async e=>{e.preventDefault();await db.auth.signOut();location.reload()};
+ $('refresh').onclick=loadFeed;$('feed-search').oninput=()=>{const q=$('feed-search').value.trim().toLowerCase();document.querySelectorAll('.post').forEach(el=>el.classList.toggle('hidden',!el.dataset.search.includes(q)))};
+ await loadFeed();
+}
+$('composer').addEventListener('submit',async event=>{
+ event.preventDefault();if(!currentUser){location.href='signup.html';return}
+ const file=postFile.files?.[0],kind=$('post-type').value,caption=$('caption').value.trim(),title=$('post-title').value.trim(),ingredients=$('ingredients').value.trim(),instructions=$('instructions').value.trim();
+ if(kind==='recipe'&&(!title||!ingredients||!instructions)){status('For a recipe post, add a title, ingredients, and steps.',true);return}
+ if(!file&&!caption&&!title){status('Add a photo/video or write a title or caption first.',true);return}
+ const button=$('publish');button.disabled=true;button.textContent='Sharing…';$('composer-status').classList.remove('show');
+ let mediaPath='',mediaType='none';
+ try{
+  if(file){mediaType=file.type.startsWith('video/')?'video':'image';const ext=(file.name.split('.').pop()||'bin').replace(/[^a-z0-9]/gi,'').toLowerCase();mediaPath=currentUser.id+'/'+crypto.randomUUID()+'.'+ext;
+   const {error:uploadError}=await db.storage.from(BUCKET).upload(mediaPath,file,{contentType:file.type,upsert:false});if(uploadError)throw uploadError}
+  const {error}=await db.from('posts').insert({user_id:currentUser.id,post_type:kind,media_type:mediaType,media_path:mediaPath,title,caption,ingredients:kind==='recipe'?ingredients:'',instructions:kind==='recipe'?instructions:''});
+  if(error){if(mediaPath)await db.storage.from(BUCKET).remove([mediaPath]);throw error}
+  event.target.reset();preview.replaceChildren();preview.style.display='none';$('recipe-fields').classList.add('hidden');status('Your post is up!');await loadFeed()
+ }catch(e){status(e.message||'Could not publish this post. Try again.',true)}
+ finally{button.disabled=false;button.textContent='Share with the community'}
+});
+init();
+</script>
+</body></html>
