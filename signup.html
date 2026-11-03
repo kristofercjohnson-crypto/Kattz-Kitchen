@@ -127,7 +127,9 @@ $('signup-form').addEventListener('submit',async event=>{
   }catch(error){showNotice(error.message||'We could not create your account. Please try again.',true)}
   finally{setBusy(button,false,'Create my account')}
 });
-$('switch-to-login').querySelector('button').addEventListener('click',()=>{ $('signup-view').classList.add('hidden');$('login-view').classList.remove('hidden');$('switch-to-login').classList.add('hidden');$('switch-to-signup').classList.remove('hidden');notice.classList.remove('show')});
+function showLogin(){ $('signup-view').classList.add('hidden');$('login-view').classList.remove('hidden');$('switch-to-login').classList.add('hidden');$('switch-to-signup').classList.remove('hidden');notice.classList.remove('show');}
+$('switch-to-login').querySelector('button').addEventListener('click',showLogin);
+if(new URLSearchParams(location.search).get('mode')==='login')showLogin();
 $('switch-to-signup').querySelector('button').addEventListener('click',()=>{ $('login-view').classList.add('hidden');$('signup-view').classList.remove('hidden');$('switch-to-signup').classList.add('hidden');$('switch-to-login').classList.remove('hidden');notice.classList.remove('show')});
 $('sign-in').addEventListener('click',async()=>{
   notice.classList.remove('show');const email=$('login-email').value.trim(),password=$('login-password').value;
