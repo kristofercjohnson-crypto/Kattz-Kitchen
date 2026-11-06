@@ -42,20 +42,21 @@ input,textarea,select{width:100%;padding:11px 12px;margin:7px 0 10px;border:1px 
 <label class="label" for="caption">Caption</label><textarea id="caption" maxlength="2000" placeholder="Tell us about it…"></textarea>
 <div id="recipe-fields" class="hidden"><label class="label" for="ingredients">Ingredients</label><textarea id="ingredients" maxlength="5000" placeholder="List ingredients, one per line"></textarea><label class="label" for="instructions">Steps</label><textarea id="instructions" maxlength="10000" placeholder="Add the cooking steps"></textarea></div>
 <div id="file-preview" class="preview"></div>
-<div class="actionrow"><span class="small">Free launch video limit: 15 seconds. Max file size: 50 MB.</span><button class="btn" id="publish" type="submit">Share with the community</button></div>
+<div class="actionrow"><span class="small" id="video-limit-note">Free video limit: 15 seconds. Max file size: 50 MB.</span><button class="btn" id="publish" type="submit">Share with the community</button></div>
 <div id="composer-status" class="status" role="status" aria-live="polite"></div>
 </form>
 </section>
 <div class="feed-head"><h2>Community feed</h2><div class="feed-controls"><input id="feed-search" type="search" placeholder="Search recent posts…" aria-label="Search recent posts"><button id="refresh">↻ Refresh</button></div></div>
 <div id="feed"><div class="panel empty"><strong>Loading the food feed…</strong>One moment.</div></div>
 </main>
-<aside class="panel side"><h2>Let’s keep it fun</h2><p>Be kind, credit recipes and photos that aren’t yours, and share only content you have permission to post.</p><p>React with ❤️, 😋, 🔥, 👏, or 😂. Report anything that breaks the community rules.</p><div class="mini"><h2>Food businesses</h2><p>Share your story and menu here. Customers contact you directly to order; payments stay outside the app.</p></div><div class="mini"><h2>VIP videos</h2><p>Longer tutorials up to 10 minutes can come with VIP after subscription billing is set up. For now, videos are limited to 15 seconds.</p></div></aside>
+<aside class="panel side"><h2>Let’s keep it fun</h2><p>Be kind, credit recipes and photos that aren’t yours, and share only content you have permission to post.</p><p>React with ❤️, 😋, 🔥, 👏, or 😂. Report anything that breaks the community rules.</p><div class="mini"><h2>Food businesses</h2><p>Share your story and menu here. Customers contact you directly to order; payments stay outside the app.</p></div><div class="mini" id="vip-panel"><h2>Get Saucy VIP</h2><p id="vip-description">Unlock step-by-step tutorials up to 10 minutes for $4.99/month. Cancel anytime.</p><button class="btn" id="vip-action" type="button" disabled>Checking VIP…</button><p class="small" id="vip-status" role="status" aria-live="polite">Checking membership options…</p></div></aside>
 </div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 const SUPABASE_URL='https://tacvlueakxokrzvtxpnx.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_cdyFDjwbzCdgAVpg2-nOUQ_3mz0410G';
-const BUCKET='get-saucy-posts',MAX_FILE=50*1024*1024,MAX_VIDEO_SECONDS=15;
+const BUCKET='get-saucy-posts',MAX_FILE=50*1024*1024,FREE_VIDEO_SECONDS=15,VIP_VIDEO_SECONDS=600;
+let maxVideoSeconds=FREE_VIDEO_SECONDS,vipActive=false,vipBillingReady=false,vipSubscriptionStatus='inactive';
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY),$=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const status=(message,error=false)=>{$('composer-status').textContent=message;$('composer-status').classList.toggle('error',error);$('composer-status').classList.add('show')};
@@ -73,11 +74,70 @@ postFile.addEventListener('change',async()=>{
     const temp=document.createElement('video');temp.preload='metadata';temp.src=URL.createObjectURL(file);
     await new Promise(resolve=>{temp.onloadedmetadata=resolve;temp.onerror=resolve});
     const duration=temp.duration;URL.revokeObjectURL(temp.src);
-    if(Number.isFinite(duration)&&duration>MAX_VIDEO_SECONDS){postFile.value='';status('Free launch videos can be up to 15 seconds. Longer VIP videos will be added after subscriptions are ready.',true);return}
+    if(Number.isFinite(duration)&&duration>maxVideoSeconds){postFile.value='';status((vipActive?'VIP':'Free')+' videos can be up to '+(vipActive?'10 minutes':'15 seconds')+'. Choose a shorter video or join VIP for longer tutorials.',true);return}
   }
   const node=document.createElement(isVideo?'video':'img');node.src=URL.createObjectURL(file);node.className='preview';if(isVideo){node.controls=true;node.muted=true}
   preview.append(node);preview.style.display='block';$('composer-status').classList.remove('show');
 });
+
+async function refreshVipMembership(){
+ const button=$('vip-action'),note=$('vip-status');
+ if(!button||!note)return;
+ button.disabled=true;button.textContent='Checking VIP…';
+ try{
+  const {data:billing,error:billingError}=await db.functions.invoke('vip-billing',{body:{action:'status'}});
+  if(billingError||billing?.enabled!==true)throw new Error('VIP billing is not ready yet.');
+  vipBillingReady=true;
+  if(!currentUser){
+   vipActive=false;vipSubscriptionStatus='inactive';maxVideoSeconds=FREE_VIDEO_SECONDS;
+   button.disabled=false;button.textContent='Sign in to join VIP';
+   note.textContent='Create a free account, then join VIP for $4.99/month. Cancel anytime.';
+   $('video-limit-note').textContent='Free video limit: 15 seconds. Max file size: 50 MB.';
+   return;
+  }
+  const {data:membership,error}=await db.from('user_subscriptions').select('status,cancel_at_period_end,current_period_end').eq('user_id',currentUser.id).maybeSingle();
+  if(error)throw new Error('VIP membership records are still being set up.');
+  vipSubscriptionStatus=membership?.status||'inactive';
+  vipActive=['active','trialing'].includes(vipSubscriptionStatus);
+  maxVideoSeconds=vipActive?VIP_VIDEO_SECONDS:FREE_VIDEO_SECONDS;
+  const canManage=['active','trialing','past_due','unpaid','incomplete'].includes(vipSubscriptionStatus);
+  button.disabled=false;button.textContent=canManage?'Manage VIP billing':'Join VIP · $4.99/month';
+  if(vipActive){
+   const until=membership.current_period_end?new Date(membership.current_period_end).toLocaleDateString():'your next renewal date';
+   note.textContent=membership.cancel_at_period_end?'VIP is active until '+until+'. Manage billing to update your plan.':'VIP is active. You can manage or cancel anytime.';
+   $('vip-description').textContent='Your VIP membership is active. Enjoy step-by-step videos up to 10 minutes.';
+   $('video-limit-note').textContent='VIP video limit: 10 minutes. Max file size: 50 MB.';
+  }else if(canManage){
+   note.textContent='There is a billing issue with your membership. Open billing to update your payment method.';
+   $('video-limit-note').textContent='Free video limit: 15 seconds. Max file size: 50 MB.';
+  }else{
+   note.textContent='VIP includes step-by-step videos up to 10 minutes for $4.99/month. Cancel anytime.';
+   $('video-limit-note').textContent='Free video limit: 15 seconds. Max file size: 50 MB.';
+  }
+ }catch(error){
+  vipBillingReady=false;vipActive=false;maxVideoSeconds=FREE_VIDEO_SECONDS;
+  button.disabled=true;button.textContent='VIP opening soon';
+  note.textContent='VIP billing is being set up. The free community is still available.';
+  $('video-limit-note').textContent='Free video limit: 15 seconds. Max file size: 50 MB.';
+ }
+}
+async function handleVipAction(){
+ if(!vipBillingReady){$('vip-status').textContent='VIP checkout is not ready yet. Please check back soon.';return}
+ if(!currentUser){location.href='login.html';return}
+ const button=$('vip-action'),note=$('vip-status');
+ button.disabled=true;button.textContent='Opening secure billing…';
+ try{
+  const action=['active','trialing','past_due','unpaid','incomplete'].includes(vipSubscriptionStatus)?'portal':'checkout';
+  const {data,error}=await db.functions.invoke('vip-billing',{body:{action:action}});
+  if(error)throw error;
+  if(!data?.url)throw new Error('The secure billing link was not returned.');
+  location.assign(data.url);
+ }catch(error){
+  note.textContent='Could not open secure billing. Please try again later.';
+  button.disabled=false;button.textContent=vipActive?'Manage VIP billing':'Join VIP · $4.99/month';
+ }
+}
+
 async function profileMap(ids){if(!ids.length)return{};const {data,error}=await db.from('profiles').select('user_id,account_type,display_name,city,business_name').in('user_id',ids);if(error)throw error;return Object.fromEntries((data||[]).map(p=>[p.user_id,p]))}
 function timeAgo(value){const seconds=Math.max(0,(Date.now()-new Date(value).getTime())/1000);if(seconds<60)return'just now';if(seconds<3600)return Math.floor(seconds/60)+'m ago';if(seconds<86400)return Math.floor(seconds/3600)+'h ago';return Math.floor(seconds/86400)+'d ago'}
 function makePost(post,comments,reactions){
@@ -122,8 +182,13 @@ async function loadFeed(){
 }
 async function init(){
  const {data:{session}}=await db.auth.getSession();currentUser=session?.user||null;
+ $('vip-action').addEventListener('click',handleVipAction);
+ await refreshVipMembership();
+ const vipResult=new URLSearchParams(location.search).get('vip');
+ if(vipResult==='success'){$('vip-status').textContent='Checkout complete. Confirming your VIP membership…';setTimeout(refreshVipMembership,2500)}else if(vipResult==='cancelled')$('vip-status').textContent='Checkout was canceled. You can join VIP whenever you are ready.';
  $('composer').classList.toggle('hidden',!currentUser);$('sign-in-needed').classList.toggle('hidden',!!currentUser);
- $('moderation-link').classList.toggle('hidden',!['moderator','admin'].includes(currentUser?.app_metadata?.role));\n $('profile-link').classList.toggle('hidden',!currentUser);$('moderation-link').classList.toggle('hidden',!['moderator','admin'].includes(currentUser?.app_metadata?.role));$('account-link').textContent=currentUser?'Sign out':'Sign in';$('account-link').href=currentUser?'#signout':'signup.html';
+ $('moderation-link').classList.toggle('hidden',!['moderator','admin'].includes(currentUser?.app_metadata?.role));
+ $('profile-link').classList.toggle('hidden',!currentUser);$('moderation-link').classList.toggle('hidden',!['moderator','admin'].includes(currentUser?.app_metadata?.role));$('account-link').textContent=currentUser?'Sign out':'Sign in';$('account-link').href=currentUser?'#signout':'signup.html';
  if(currentUser)$('account-link').onclick=async e=>{e.preventDefault();await db.auth.signOut();location.reload()};
  $('refresh').onclick=loadFeed;$('feed-search').oninput=()=>{const q=$('feed-search').value.trim().toLowerCase();document.querySelectorAll('.post').forEach(el=>el.classList.toggle('hidden',!el.dataset.search.includes(q)))};
  await loadFeed();
