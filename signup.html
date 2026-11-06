@@ -23,8 +23,10 @@ h2{margin:0 0 7px;font-size:21px}.hint{margin:0 0 20px;color:var(--muted);font-s
 .switch{text-align:center;margin:22px 0 0;color:var(--muted);font-size:13px}.switch button{border:0;background:none;color:var(--gold2);font:800 13px 'DM Sans',sans-serif;cursor:pointer}
 .notice{display:none;margin:16px 0 0;padding:12px 14px;border:1px solid #9d793e;border-radius:10px;background:#21190d;color:#f8d995;font-size:13px;line-height:1.5}.notice.show{display:block}.notice.error{border-color:#983b2d;background:#24110e;color:var(--error)}
 .hidden{display:none!important}.subnote{margin:17px 0 0;color:#a99b87;font-size:11px;line-height:1.55}
+html.login-mode .intro{display:none}html.login-mode .shell{padding-top:12px}html.login-mode #signup-view{display:none!important}html.login-mode #login-view{display:block!important}html.login-mode #switch-to-login{display:none!important}html.login-mode #switch-to-signup{display:block!important}html.login-mode .card{margin-top:12px}
 @media(max-width:560px){.type-grid{grid-template-columns:1fr}.fields{grid-template-columns:1fr}.field.full{grid-column:auto}.actions .btn{padding:12px 15px}.stepper{gap:7px;font-size:10px}.bubble{width:24px;height:24px}}
 </style>
+<script>if(new URLSearchParams(location.search).get('mode')==='login')document.documentElement.classList.add('login-mode')</script>
 </head>
 <body>
 <div class="shell">
