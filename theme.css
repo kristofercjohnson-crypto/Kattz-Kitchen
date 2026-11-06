@@ -1,0 +1,39 @@
+/* Get Saucy black-and-gold visual system */
+:root{--saucy-bg:#080605;--saucy-panel:#120e0a;--saucy-panel-2:#1b120b;--saucy-gold:#f4bf4e;--saucy-gold-light:#ffe09a;--saucy-red:#e63b1c;--saucy-cream:#fff4df;--saucy-muted:#c9b69c}
+html{scroll-behavior:smooth;background:var(--saucy-bg)}
+body{background-color:var(--saucy-bg)!important;background-image:radial-gradient(ellipse at 50% -12%,#48250e 0,#1c120b 32%,#080605 76%)!important;color:var(--saucy-cream)}
+a{color:var(--saucy-gold-light)}
+header,.top,.nav,.bottom-nav{background:linear-gradient(180deg,#120d08f5,#080605f7)!important;border-color:#b57a2c!important;backdrop-filter:blur(12px)}
+.card,.panel,.tile,.spotlight,.post,.side,.profile-card,.vendor-card,.recipe-card{background:linear-gradient(145deg,#1b130c,#0b0907 78%)!important;border-color:#a6742c!important;box-shadow:0 10px 28px #0008,0 0 15px #e7a93014}
+h1,h2,h3,.section-title{color:var(--saucy-gold-light)}
+button,.btn,.cta,.signup-nav{border:1px solid #ffe09a!important;border-radius:999px!important;background:linear-gradient(115deg,#9d5414,#eaa833 48%,#ffd876)!important;color:#180d05!important;font-weight:900!important;box-shadow:0 3px 0 #7b320e,0 0 18px #f0b33a3a!important}
+button:hover,.btn:hover,.cta:hover,.signup-nav:hover{filter:brightness(1.12);transform:translateY(-1px)}
+input,textarea,select{background:linear-gradient(145deg,#17110b,#090807)!important;border:1px solid #a6742c!important;border-radius:12px!important;color:var(--saucy-cream)!important}
+input:focus,textarea:focus,select:focus{border-color:#ffdb80!important;box-shadow:0 0 0 3px #e5a83b2a!important}
+.small,.hint,.meta,.lead,.subnote{color:var(--saucy-muted)}
+.badge,.tag,.eyebrow,.kicker{color:var(--saucy-gold-light)}
+.nav{box-shadow:0 -8px 24px #0009}
+.nav a,.header-actions a{color:#f4d59a}
+.hero{isolation:isolate;background-image:linear-gradient(90deg,#080605f5 0%,#120904d8 47%,#140b0770 100%),url('food-01.jpg')!important;border-bottom:1px solid #d49a34}
+.hero:after{opacity:.42}
+.hero h1{color:#ffd35d;text-shadow:0 3px 0 #841b0e,0 0 24px #ff842d55}
+.hero h1 span{color:#ff5a25;text-shadow:0 2px 0 #8d1c0b,0 0 18px #ff7a2a66}
+.search{background:#100b08;border-color:#bd852d;box-shadow:inset 0 0 14px #f0b43c12}
+.shortcut span{border-color:#e5b44a;background:radial-gradient(circle at 35% 20%,#55300e,#100a06 74%);box-shadow:0 0 18px #edaa2f35}
+.tile{border-radius:16px!important}
+.tile img{filter:saturate(1.08) contrast(1.03)}
+.section-title h2{text-shadow:0 0 14px #e8ae3929}
+@media(max-width:560px){.shell{padding-top:14px}.card{border-radius:18px}.hero{min-height:390px}.hero .hero-content{padding-top:28px}.shortcuts{grid-template-columns:repeat(5,minmax(0,1fr))}.shortcut{font-size:9px}.shortcut span{width:48px;height:48px;font-size:21px}}
+
+/* Owner portrait and showcase hero */
+.hero{min-height:430px!important;position:relative;isolation:isolate}
+.hero-content{width:69%;max-width:390px;padding-bottom:32px!important}
+.hero-portrait{position:absolute;z-index:1;right:0;bottom:0;width:56%;height:100%;object-fit:cover;object-position:center top;mask-image:linear-gradient(90deg,transparent 0%,#000 23%);filter:drop-shadow(0 0 24px #f4bf4e35)}
+.owner-credit{margin:12px 0 15px;display:grid;gap:2px;color:#ffe09a}
+.owner-credit span{font-size:10px;letter-spacing:2px;font-weight:900}
+.owner-credit strong{font-family:'Great Vibes',cursive;font-size:34px;font-weight:400;color:#ffd35d;text-shadow:0 0 14px #e7a93070}
+.hero-actions{display:flex;flex-wrap:wrap;gap:9px}
+.hero .cta-outline{background:linear-gradient(145deg,#160f08,#090706)!important;color:#ffe09a!important}
+.hero-flavor{position:absolute;z-index:2;bottom:9px;left:18px;color:#ffe09a;font-size:9px;letter-spacing:1.7px;font-weight:800;text-shadow:0 2px 5px #000}
+@media(max-width:560px){.hero{min-height:410px!important}.hero-content{width:72%;padding-left:17px!important;padding-right:0!important}.hero-portrait{width:60%;object-position:56% top}.hero .cta{padding:10px 12px;font-size:10px}.hero-flavor{left:17px;max-width:68%;font-size:8px}.owner-credit strong{font-size:30px}}
+@media(max-width:370px){.hero-content{width:77%}.hero-portrait{width:64%;opacity:.94}.kicker{font-size:9px}.hero .cta{padding:9px 10px}}
