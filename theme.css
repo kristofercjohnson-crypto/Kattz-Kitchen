@@ -25,15 +25,6 @@ input:focus,textarea:focus,select:focus{border-color:#ffdb80!important;box-shado
 .section-title h2{text-shadow:0 0 14px #e8ae3929}
 @media(max-width:560px){.shell{padding-top:14px}.card{border-radius:18px}.hero{min-height:390px}.hero .hero-content{padding-top:28px}.shortcuts{grid-template-columns:repeat(5,minmax(0,1fr))}.shortcut{font-size:9px}.shortcut span{width:48px;height:48px;font-size:21px}}
 
-/* Owner portrait and showcase hero */
-.hero{min-height:430px!important;position:relative;isolation:isolate}
-.hero-content{width:69%;max-width:390px;padding-bottom:32px!important}
-.hero-portrait{position:absolute;z-index:1;right:0;bottom:0;width:56%;height:100%;object-fit:cover;object-position:center top;mask-image:linear-gradient(90deg,transparent 0%,#000 23%);filter:drop-shadow(0 0 24px #f4bf4e35)}
-.owner-credit{margin:12px 0 15px;display:grid;gap:2px;color:#ffe09a}
-.owner-credit span{font-size:10px;letter-spacing:2px;font-weight:900}
-.owner-credit strong{font-family:'Great Vibes',cursive;font-size:34px;font-weight:400;color:#ffd35d;text-shadow:0 0 14px #e7a93070}
-.hero-actions{display:flex;flex-wrap:wrap;gap:9px}
-.hero .cta-outline{background:linear-gradient(145deg,#160f08,#090706)!important;color:#ffe09a!important}
-.hero-flavor{position:absolute;z-index:2;bottom:9px;left:18px;color:#ffe09a;font-size:9px;letter-spacing:1.7px;font-weight:800;text-shadow:0 2px 5px #000}
-@media(max-width:560px){.hero{min-height:410px!important}.hero-content{width:72%;padding-left:17px!important;padding-right:0!important}.hero-portrait{width:60%;object-position:56% top}.hero .cta{padding:10px 12px;font-size:10px}.hero-flavor{left:17px;max-width:68%;font-size:8px}.owner-credit strong{font-size:30px}}
-@media(max-width:370px){.hero-content{width:77%}.hero-portrait{width:64%;opacity:.94}.kicker{font-size:9px}.hero .cta{padding:9px 10px}}
+/* Small footer link to the creator page */
+.footer-about{display:inline-block;margin-top:8px;font-size:10px;color:#d6b277;text-decoration:underline;text-underline-offset:3px;opacity:.8}
+.footer-about:hover{opacity:1}
