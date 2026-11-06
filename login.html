@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080605">
+<title>Sign in • Get Saucy</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800;900&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#090706;--panel:#15100c;--gold:#e8b84e;--cream:#fff4df;--muted:#c5b9a8;--line:#765b30;--error:#ff9a83}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0,#38270f 0,#16120b 34%,var(--bg) 74%);color:var(--cream);font:15px 'DM Sans',Arial,sans-serif;display:flex;flex-direction:column}
+a{color:#ffd986;text-decoration:none}header{width:min(100% - 32px,620px);margin:0 auto;padding:16px 0;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e8b84e38}.brand{display:flex;align-items:center;gap:10px;color:var(--gold);font-size:20px;font-weight:900;font-style:italic}.brand img{width:42px;height:42px;object-fit:contain}.brand em{font:32px 'Great Vibes',cursive}
+main{width:min(100% - 32px,480px);margin:clamp(22px,8vh,72px) auto 30px}.eyebrow{margin:0 0 8px;color:var(--gold);font-size:10px;font-weight:900;letter-spacing:2px;text-align:center}.card{padding:clamp(22px,6vw,36px);background:linear-gradient(145deg,#1a150e,#0d0c0a 78%);border:1px solid #e8b84e70;border-radius:20px;box-shadow:0 24px 70px #0009}h1{text-align:center;margin:0;font-size:32px}h1 em{color:var(--gold);font:1.16em 'Great Vibes',cursive}.hint{text-align:center;color:var(--muted);font-size:13px;line-height:1.55;margin:9px 0 22px}
+label{display:block;margin:0 0 7px;font-size:12px;font-weight:800;color:#f7e3bf}.field{margin:0 0 16px}input{display:block;width:100%;min-height:48px;padding:12px 13px;border:1px solid var(--line);border-radius:10px;background:#090909;color:var(--cream);font:15px 'DM Sans',sans-serif;outline:none}input:focus{border-color:var(--gold);box-shadow:0 0 0 3px #e8b84e20}.actionrow{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px}.text-button{padding:10px 0;border:0;background:none;color:#ffd986;font:700 12px 'DM Sans',sans-serif;cursor:pointer}.btn{min-height:48px;padding:12px 20px;border:0;border-radius:10px;background:linear-gradient(110deg,#c28927,#ffcf62);color:#191208;font:900 14px 'DM Sans',sans-serif;cursor:pointer}.btn:disabled{opacity:.65;cursor:wait}.notice{display:none;margin-top:16px;padding:12px 14px;border:1px solid #9d793e;border-radius:10px;background:#21190d;color:#f8d995;font-size:13px;line-height:1.5}.notice.show{display:block}.notice.error{border-color:#983b2d;background:#24110e;color:var(--error)}.switch{text-align:center;margin:20px 0 0;color:var(--muted);font-size:13px}.back{display:block;text-align:center;margin:22px auto 0;font-size:13px;font-weight:700}
+</style>
+</head>
+<body>
+<header><a class="brand" href="index.html"><img src="katt-mascot.png" alt=""><span>GET <em>Saucy</em></span></a><a href="index.html">Home</a></header>
+<main><div class="card"><p class="eyebrow">REAL MISSISSIPPI BBQ • FOOD • COMMUNITY</p><h1>Welcome <em>back</em></h1><p class="hint">Sign in with your Get Saucy account to join the food community.</p>
+<form id="login-form">
+<div class="field"><label for="email">Email address</label><input id="email" type="email" autocomplete="email" placeholder="you@example.com" required></div>
+<div class="field"><label for="password">Password</label><input id="password" type="password" autocomplete="current-password" placeholder="Your password" required></div>
+<div class="actionrow"><button class="text-button" id="forgot" type="button">Forgot password?</button><button class="btn" id="submit" type="submit">Sign in</button></div>
+</form><div id="notice" class="notice" role="status" aria-live="polite"></div>
+<p class="switch">New to Get Saucy? <a href="signup.html">Create your free account</a></p></div><a class="back" href="index.html">← Back to Get Saucy</a></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const db=window.supabase.createClient('https://tacvlueakxokrzvtxpnx.supabase.co','sb_publishable_cdyFDjwbzCdgAVpg2-nOUQ_3mz0410G');
+const form=document.getElementById('login-form'),notice=document.getElementById('notice'),button=document.getElementById('submit');
+function show(message,isError=false){notice.textContent=message;notice.classList.toggle('error',isError);notice.classList.add('show')}
+form.addEventListener('submit',async event=>{event.preventDefault();notice.classList.remove('show');button.disabled=true;button.textContent='Signing in…';try{const{error}=await db.auth.signInWithPassword({email:document.getElementById('email').value.trim(),password:document.getElementById('password').value});if(error)throw error;show('You’re signed in. Welcome back!');setTimeout(()=>location.href='index.html#home',900)}catch(error){show(error.message||'We could not sign you in. Please try again.',true)}finally{button.disabled=false;button.textContent='Sign in'}});
+document.getElementById('forgot').addEventListener('click',async()=>{const email=document.getElementById('email').value.trim();if(!email){show('Enter your email address first, then choose Forgot password.',true);return}try{const{error}=await db.auth.resetPasswordForEmail(email,{redirectTo:new URL('signup.html',location.href).href});if(error)throw error;show('If an account uses that email, Supabase will send a password reset link.')}catch(error){show(error.message||'We could not send a reset link right now.',true)}});
+</script>
+</body>
+</html>
