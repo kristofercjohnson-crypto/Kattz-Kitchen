@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080808"><title>Kattz Saucy Circle | Moderator</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080808"><title>The Saucy Circle | Moderator</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=Great+Vibes&display=swap" rel="stylesheet">
 <style>
 :root{color-scheme:dark;--bg:#080808;--panel:#14120e;--gold:#e8b84e;--cream:#fff4df;--muted:#c5b9a8;--red:#a93220;--green:#607b3b}
@@ -21,10 +21,10 @@ button:hover{border-color:var(--gold);color:var(--gold)}button.hide{background:#
 </style>
 <link rel="stylesheet" href="theme.css"></head>
 <body><div class="shell">
-<header><a class="brand" href="index.html"><img src="katt-mascot.png" alt=""><span>KATTZ <em>Saucy Circle</em></span></a><nav><a href="community.html">Community</a><a href="index.html">Home</a><a id="signout" href="#">Sign out</a></nav></header>
+<header><a class="brand" href="index.html"><img src="katt-mascot.png" alt=""><span>THE <em>Saucy Circle</em></span></a><nav><a href="community.html">Community</a><a href="index.html">Home</a><a id="signout" href="#">Sign out</a></nav></header>
 <h1>Community <em>moderation</em></h1><p class="lead">Review reported posts, take action, and restore content when a report was mistaken. Actions are recorded on the report and post.</p>
 <div id="notice" class="notice hidden" role="status" aria-live="polite"></div>
-<section id="auth-panel" class="panel hidden"><h2>Moderator sign in required</h2><p>Sign in with your Kattz Saucy Circle account, then ask the project owner to assign moderator access if you are an authorized reviewer.</p><a class="btn" href="signup.html">Go to sign in →</a></section>
+<section id="auth-panel" class="panel hidden"><h2>Moderator sign in required</h2><p>Sign in with your The Saucy Circle account, then ask the project owner to assign moderator access if you are an authorized reviewer.</p><a class="btn" href="signup.html">Go to sign in →</a></section>
 <main id="dashboard" class="hidden">
 <div class="tabs"><button id="pending-tab" class="active">Pending reports</button><button id="hidden-tab">Hidden / removed posts</button><button id="refresh">Refresh</button></div>
 <section id="pending-section"><h2 class="group-title">Reported posts</h2><div id="pending-list"></div></section>
@@ -41,7 +41,7 @@ function niceDate(value){return new Date(value).toLocaleString()}
 async function profileMap(ids){if(!ids.length)return{};const {data,error}=await db.from('profiles').select('user_id,display_name,business_name').in('user_id',ids);if(error)throw error;return Object.fromEntries(data.map(p=>[p.user_id,p]))}
 function createCase(post, extra={}){
  const node=document.createElement('article');node.className='case';
- const profile=extra.profile||{},author=profile.business_name||profile.display_name||'Kattz Saucy Circle member';
+ const profile=extra.profile||{},author=profile.business_name||profile.display_name||'The Saucy Circle member';
  const head=document.createElement('div');head.className='case-head';
  const left=document.createElement('div');
  left.innerHTML='<h2>'+esc(post.title||'Community post')+'</h2><div class="meta">Posted by '+esc(author)+' · '+niceDate(post.created_at)+' · Status: '+esc(post.status||'published')+'</div>';
