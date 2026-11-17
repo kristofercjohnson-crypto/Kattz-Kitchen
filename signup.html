@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#080808">
-<title>Join Let's Get Saucy</title>
+<title>Join Kattz Saucy Circle</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=Great+Vibes&display=swap" rel="stylesheet">
 <style>
 :root{color-scheme:dark;--bg:#080808;--panel:#12100d;--panel2:#1b1710;--gold:#e8b84e;--gold2:#ffd986;--cream:#fff4df;--muted:#c5b9a8;--red:#b9361d;--line:#665027;--error:#ff9a83}
@@ -30,13 +30,13 @@ html.login-mode .intro{display:none}html.login-mode .shell{padding-top:12px}html
 <link rel="stylesheet" href="theme.css"></head>
 <body>
 <div class="shell">
-<header><a class="brand" href="index.html"><img src="katt-mascot.png" alt=""><span>LET'S GET <em>Saucy</em></span></a><a class="back" href="index.html">← Back to Let's Get Saucy</a></header>
-<section class="intro"><p class="eyebrow">REAL MISSISSIPPI BBQ • FOOD • COMMUNITY</p><h1>Come get <em>Saucy</em></h1><p>One account gets you into the whole food community. Join as a creator or set up your food business profile.</p></section>
+<header><a class="brand" href="index.html"><img src="katt-mascot.png" alt=""><span>KATTZ <em>Saucy Circle</em></span></a><a class="back" href="index.html">← Back to Kattz Saucy Circle</a></header>
+<section class="intro"><p class="eyebrow">REAL MISSISSIPPI BBQ • FOOD • COMMUNITY</p><h1>Join <em>Saucy Circle</em></h1><p>One account gets you into the whole food community. Join as a creator or set up your food business profile.</p></section>
 <main class="card">
 <div id="signup-view">
 <div class="stepper" aria-label="Signup progress"><div class="step active" id="step-label-1"><span class="bubble">1</span><span>Your account</span></div><span class="line"></span><div class="step" id="step-label-2"><span class="bubble">2</span><span>Your profile</span></div></div>
 <section id="step-one">
-<h2>Create your account</h2><p class="hint">Choose how you’ll use Let's Get Saucy. You’ll use one email and password to sign in either way.</p>
+<h2>Create your account</h2><p class="hint">Choose how you’ll use Kattz Saucy Circle. You’ll use one email and password to sign in either way.</p>
 <div class="type-grid" role="radiogroup" aria-label="Account type">
 <label class="type-card selected" id="personal-card"><input type="radio" name="account-type" value="personal" checked><span class="type-icon">👩🏽‍🍳</span><strong>Personal creator</strong><small>Share food photos, short videos, recipes, and your cooking story.</small></label>
 <label class="type-card" id="business-card"><input type="radio" name="account-type" value="business"><span class="type-icon">🍽️</span><strong>Food business</strong><small>Showcase your food truck, catering, restaurant, or other food business.</small></label>
@@ -70,13 +70,13 @@ html.login-mode .intro{display:none}html.login-mode .shell{padding-top:12px}html
 </form>
 </section>
 <section id="login-view" class="hidden">
-<h2>Welcome back</h2><p class="hint">Sign in with the same Let's Get Saucy account you created.</p>
+<h2>Welcome back</h2><p class="hint">Sign in with the same Kattz Saucy Circle account you created.</p>
 <div class="fields"><div class="field full"><label for="login-email">Email address</label><input id="login-email" type="email" autocomplete="email" placeholder="you@example.com"></div><div class="field full"><label for="login-password">Password</label><input id="login-password" type="password" autocomplete="current-password" placeholder="Your password"></div></div>
 <div class="actions"><button class="text-button" id="forgot-password" type="button">Forgot password?</button><button class="btn" id="sign-in" type="button">Sign in</button></div>
 </section>
 <div class="notice" id="notice" role="status" aria-live="polite"></div>
 <p class="switch" id="switch-to-login">Already have an account? <button type="button">Sign in</button></p>
-<p class="switch hidden" id="switch-to-signup">New to Let's Get Saucy? <button type="button">Create an account</button></p>
+<p class="switch hidden" id="switch-to-signup">New to Kattz Saucy Circle? <button type="button">Create an account</button></p>
 <p class="subnote">Business profiles can share a website, menu, and contact details so customers can reach you directly. Ordering and payments stay outside the app for now. Email confirmation may be required before your first sign-in.</p>
 </main>
 </div>
@@ -124,7 +124,7 @@ $('signup-form').addEventListener('submit',async event=>{
   try{
     const {data,error}=await supabaseClient.auth.signUp({email,password,options:{data:metadata,emailRedirectTo:new URL('index.html',location.href).href}});
     if(error)throw error;
-    if(data.session){showNotice('Your Let's Get Saucy account is ready. You’re signed in!');setTimeout(()=>location.href='index.html#home',1400)}
+    if(data.session){showNotice('Your Kattz Saucy Circle account is ready. You’re signed in!');setTimeout(()=>location.href='index.html#home',1400)}
     else showNotice('Account created. Check your inbox for the confirmation link, then come back here to sign in. If you don’t see it, check spam.');
   }catch(error){showNotice(error.message||'We could not create your account. Please try again.',true)}
   finally{setBusy(button,false,'Create my account')}
