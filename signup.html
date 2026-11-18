@@ -75,6 +75,7 @@ html.login-mode .intro{display:none}html.login-mode .shell{padding-top:12px}html
 <div class="actions"><button class="text-button" id="forgot-password" type="button">Forgot password?</button><button class="btn" id="sign-in" type="button">Sign in</button></div>
 </section>
 <div class="notice" id="notice" role="status" aria-live="polite"></div>
+<button type="button" class="text-button hidden" id="resend-confirmation">Resend confirmation email</button>
 <p class="switch" id="switch-to-login">Already have an account? <button type="button">Sign in</button></p>
 <p class="switch hidden" id="switch-to-signup">New to The Saucy Circle? <button type="button">Create an account</button></p>
 <p class="subnote">Business profiles can share a website, menu, and contact details so customers can reach you directly. Ordering and payments stay outside the app for now. Email confirmation may be required before your first sign-in.</p>
@@ -88,6 +89,7 @@ const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHA
 const $=id=>document.getElementById(id);
 let accountType='personal';
 const notice=$('notice');
+const resendButton=$('resend-confirmation');
 function showNotice(message,isError=false){notice.textContent=message;notice.classList.toggle('error',isError);notice.classList.add('show')}
 function setBusy(button,busy,label){button.disabled=busy;button.textContent=busy?'Please wait…':label}
 function chooseType(type){accountType=type;document.querySelectorAll('.type-card').forEach(card=>card.classList.toggle('selected',card.querySelector('input').value===type));document.querySelector('input[name="account-type"][value="'+type+'"]').checked=true}
@@ -124,10 +126,62 @@ $('signup-form').addEventListener('submit',async event=>{
   try{
     const {data,error}=await supabaseClient.auth.signUp({email,password,options:{data:metadata,emailRedirectTo:new URL('index.html',location.href).href}});
     if(error)throw error;
-    if(data.session){showNotice('Your The Saucy Circle account is ready. You’re signed in!');setTimeout(()=>location.href='index.html#home',1400)}
-    else showNotice('Account created. Check your inbox for the confirmation link, then come back here to sign in. If you don’t see it, check spam.');
-  }catch(error){showNotice(error.message||'We could not create your account. Please try again.',true)}
+    if(data.user?.identities?.length===0){
+      showNotice('This email may already have an account. Use Sign In with your existing password. If you still need email confirmation, tap Resend confirmation email.');
+      resendButton.classList.remove('hidden');
+    }else if(data.session){
+      showNotice('Your The Saucy Circle account is ready. You’re signed in!');
+      setTimeout(()=>location.href='index.html#home',1400);
+    }else{
+      showNotice('Signup was submitted. Check your inbox and spam folder. If no confirmation email arrives, tap Resend confirmation email.');
+      resendButton.classList.remove('hidden');
+    }
+  }catch(error){
+    const message=error.message||'We could not create your account. Please try again.';
+    if(/already registered|already exists/i.test(message)){
+      showNotice('This email may already have an account. Use Sign In with your existing password. If you still need email confirmation, tap Resend confirmation email.');
+      resendButton.classList.remove('hidden');
+    }else if(error.code==='email_address_not_authorized'||/email_address_not_authorized/i.test(message)){
+      showNotice('Email delivery is not enabled for this address yet. The project needs an email provider configured before it can send confirmation messages.',true);
+      resendButton.classList.remove('hidden');
+    }else if(/rate limit|too many requests/i.test(message)){
+      showNotice('Too many confirmation emails were requested. Wait a while before trying again.',true);
+      resendButton.classList.remove('hidden');
+    }else{
+      showNotice(message,true);
+    }
+  }
   finally{setBusy(button,false,'Create my account')}
+});
+resendButton.addEventListener('click',async()=>{
+  const email=$('email').value.trim();
+  if(!email||!$('email').checkValidity()){
+    showNotice('Enter your email address above first.',true);
+    $('email').focus();
+    return;
+  }
+  setBusy(resendButton,true,'Resending…');
+  try{
+    const {error}=await supabaseClient.auth.resend({type:'signup',email,options:{emailRedirectTo:new URL('index.html',location.href).href}});
+    if(error){
+      const message=error.message||'We could not request another confirmation email.';
+      if(/already confirmed/i.test(message)){
+        showNotice('This email is already confirmed. Use Sign In. If you need help with your password, choose Forgot password.');
+      }else if(error.code==='email_address_not_authorized'||/email_address_not_authorized/i.test(message)){
+        showNotice('Email delivery is not enabled for this address yet. The project needs an email provider configured before it can send confirmation messages.',true);
+      }else if(/rate limit|too many requests/i.test(message)){
+        showNotice('Too many confirmation emails were requested. Wait a while before trying again.',true);
+      }else{
+        showNotice(message,true);
+      }
+    }else{
+      showNotice('If this account is still awaiting confirmation, a new email was requested. Check your inbox and spam folder.');
+    }
+  }catch(error){
+    showNotice(error.message||'We could not request another confirmation email.',true);
+  }finally{
+    setBusy(resendButton,false,'Resend confirmation email');
+  }
 });
 function showLogin(){ $('signup-view').classList.add('hidden');$('login-view').classList.remove('hidden');$('switch-to-login').classList.add('hidden');$('switch-to-signup').classList.remove('hidden');notice.classList.remove('show');}
 $('switch-to-login').querySelector('button').addEventListener('click',showLogin);
