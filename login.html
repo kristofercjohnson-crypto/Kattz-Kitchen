@@ -16,7 +16,7 @@ label{display:block;margin:0 0 7px;font-size:12px;font-weight:800;color:#f7e3bf}
 <link rel="stylesheet" href="theme.css"></head>
 <body>
 <header><a class="brand" href="index.html"><img src="katt-mascot.png" alt=""><span class="brand-lockup"><span class="brand-the">The</span><em>Saucy Circle</em></span></a><a href="index.html">Home</a></header>
-<main><div class="card"><p class="eyebrow">REAL MISSISSIPPI BBQ • FOOD • COMMUNITY</p><h1>Welcome <em>back</em></h1><p class="hint">Sign in with your The Saucy Circle account to join the food community.</p>
+<main><div class="card"><p class="eyebrow">REAL MISSISSIPPI BBQ • FOOD • COMMUNITY</p><h1>Welcome <em>back</em></h1><p class="hint">Already have an account? Enter the same email and password you used before. You do not need to create another account.</p>
 <form id="login-form">
 <div class="field"><label for="email">Email address</label><input id="email" type="email" autocomplete="email" placeholder="you@example.com" required></div>
 <div class="field"><label for="password">Password</label><input id="password" type="password" autocomplete="current-password" placeholder="Your password" required></div>
@@ -26,6 +26,7 @@ label{display:block;margin:0 0 7px;font-size:12px;font-weight:800;color:#f7e3bf}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 const db=window.supabase.createClient('https://tacvlueakxokrzvtxpnx.supabase.co','sb_publishable_cdyFDjwbzCdgAVpg2-nOUQ_3mz0410G');
+db.auth.getSession().then(({data:{session}})=>{if(session)location.replace('index.html#home')}).catch(()=>{});
 const form=document.getElementById('login-form'),notice=document.getElementById('notice'),button=document.getElementById('submit');
 function show(message,isError=false){notice.textContent=message;notice.classList.toggle('error',isError);notice.classList.add('show')}
 form.addEventListener('submit',async event=>{event.preventDefault();notice.classList.remove('show');button.disabled=true;button.textContent='Signing in…';try{const{error}=await db.auth.signInWithPassword({email:document.getElementById('email').value.trim(),password:document.getElementById('password').value});if(error)throw error;show('You’re signed in. Welcome back!');setTimeout(()=>location.href='index.html#home',900)}catch(error){show(error.message||'We could not sign you in. Please try again.',true)}finally{button.disabled=false;button.textContent='Sign in'}});
